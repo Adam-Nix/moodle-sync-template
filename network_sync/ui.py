@@ -29,7 +29,7 @@ from moodle_downloader.client import MoodleClient  # noqa: E402
 from moodle_downloader.config import CONFIG_FILE, SECTION, Settings  # noqa: E402
 from moodle_downloader.deadlines import fetch_deadlines  # noqa: E402
 from moodle_downloader.downloader import download_all  # noqa: E402
-from network_sync import conflicts, state, year_sync  # noqa: E402
+from network_sync import conflicts, locations, state, year_sync  # noqa: E402
 from network_sync import sync as ns  # noqa: E402
 
 HOST = "127.0.0.1"
@@ -91,6 +91,37 @@ class Dashboard:
                 }
             )
             del self.run[:-RUN_LIMIT]
+
+    # -------------------------------------------------------------- locations
+    def add_location(self, name: str, path: str) -> tuple[bool, str]:
+        """Save a new place to copy to, then check it and rescan."""
+
+        if self.job.get("running"):
+            return False, "Wait for the current job to finish first."
+        try:
+            added = locations.add(name, path)
+        except locations.LocationError as error:
+            return False, str(error)
+        self.destinations = ns.get_destinations()
+        self.add_log(f"Added location {added.name}: {added.root}")
+        self.refresh()
+        return True, f"{added.name} added. Use 'Make every copy match' to fill it."
+
+    def remove_location(self, name: str) -> tuple[bool, str]:
+        """Stop copying to a place.  Its files are left exactly as they are."""
+
+        if self.job.get("running"):
+            return False, "Wait for the current job to finish first."
+        try:
+            locations.remove(name)
+        except locations.LocationError as error:
+            return False, str(error)
+        self.destinations = ns.get_destinations()
+        with self.lock:
+            self.plans.pop(name, None)
+        self.add_log(f"Removed location {name}. Its files were left where they are.")
+        self.refresh()
+        return True, f"{name} removed. Its files were not touched."
 
     # --------------------------------------------------------------- scanning
     def refresh(self, check_connection: bool = True) -> None:
@@ -571,11 +602,13 @@ class Dashboard:
                         "name": destination.name,
                         "path": destination.path,
                         "isUnc": destination.is_unc,
+                        "root": destination.root,
                         "guard": self.plans.get(destination.name, {}).get("guard") or {},
                         **_status_json(self.plans.get(destination.name, {}).get("status")),
                     }
                     for destination in self.destinations
                 ],
+                "suggestions": locations.suggestions(),
                 "scannedAt": self.scanned_at.isoformat() if self.scanned_at else None,
                 "webpages": [
                     {"name": site.name, "course": site.course, "index": site.index}
@@ -759,6 +792,18 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/download":
             ok, message = self.dashboard.start_download()
             return self._json({"ok": ok, "message": message}, 200 if ok else 409)
+        if path == "/api/location-add":
+            ok, message = self.dashboard.add_location(str(body.get("name", "")), str(body.get("path", "")))
+            return self._json({"ok": ok, "message": message}, 200 if ok else 400)
+        if path == "/api/location-remove":
+            ok, message = self.dashboard.remove_location(str(body.get("name", "")))
+            return self._json({"ok": ok, "message": message}, 200 if ok else 400)
+        if path == "/api/location-test":
+            try:
+                status = locations.test(str(body.get("path", "")))
+            except locations.LocationError as error:
+                return self._json({"ok": False, "message": str(error)})
+            return self._json({"ok": status.available, "message": status.message})
         if path == "/api/rescan":
             self.dashboard.refresh(check_connection=bool(body.get("check", True)))
             return self._json(self.dashboard.snapshot())

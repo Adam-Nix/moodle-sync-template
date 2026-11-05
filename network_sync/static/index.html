@@ -290,6 +290,11 @@
 
   /* ---------- dialogs ---------- */
   md-dialog { max-width: min(560px, calc(100vw - 32px)); }
+  .loc-form { display: grid; gap: 12px; }
+  .loc-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant, #ddd); }
+  .loc-row .grow { flex: 1; min-width: 0; }
+  .loc-row .grow b { display: block; }
+  .loc-row .grow span { display: block; font-size: 12px; overflow-wrap: anywhere; color: var(--md-sys-color-on-surface-variant, #666); }
   md-dialog.wide { max-width: min(800px, calc(100vw - 32px)); }
   md-dialog p { margin: 0 0 8px; }
   md-dialog code { font: 12px/18px var(--mono); white-space: pre-line; overflow-wrap: anywhere; }
@@ -358,6 +363,9 @@
     <div class="spacer"></div>
     <md-chip-set class="copies" id="pills"></md-chip-set>
   </div>
+  <md-icon-button id="locBtn" title="Choose where your files are copied to" aria-label="Locations">
+    <md-icon>add_location_alt</md-icon>
+  </md-icon-button>
   <md-icon-button id="checkBtn" title="Check the connections again and rescan your files (also happens every 20 seconds)" aria-label="Re-check">
     <md-icon>refresh</md-icon>
   </md-icon-button>
@@ -511,6 +519,27 @@
   <div slot="actions">
     <md-text-button id="confirmCancel">Cancel</md-text-button>
     <md-filled-button id="confirmOk">Send</md-filled-button>
+  </div>
+</md-dialog>
+
+<md-dialog id="locDlg">
+  <div slot="headline">Where your files are copied to</div>
+  <div slot="content">
+    <p class="muted" style="font-size:13px">This laptop is always the main copy. Add any folder you want kept the same:
+      a USB drive, OneDrive, or a network share. Removing a location never deletes its files.</p>
+    <div id="locList"></div>
+    <div id="locSuggest"></div>
+    <h3 style="margin:16px 0 8px;font-size:14px">Add a location</h3>
+    <div class="loc-form">
+      <md-outlined-text-field id="locName" label="Name" placeholder="Backup drive" maxlength="40"></md-outlined-text-field>
+      <md-outlined-text-field id="locPath" label="Folder" placeholder="E:\Moodle"></md-outlined-text-field>
+    </div>
+    <p class="muted" id="locMsg" style="font-size:13px;min-height:20px" role="status"></p>
+  </div>
+  <div slot="actions">
+    <md-text-button id="locTest">Test</md-text-button>
+    <md-filled-tonal-button id="locAdd">Add</md-filled-tonal-button>
+    <md-text-button id="locClose">Done</md-text-button>
   </div>
 </md-dialog>
 
@@ -694,7 +723,8 @@ function renderStatus() {
     ? dests.filter(d => d.status && destState(d).tone === "problem").map(destBanner).join("")
     : `<div class="banner"><md-icon>cloud_off</md-icon><div class="banner-body">
          <div class="title">No copies to send files to</div>
-         <div class="line small">Add 'share' or 'onedrive' under [Network] in config.ini.</div></div></div>`;
+         <div class="line small">Add a folder, a USB drive, OneDrive or a network share to keep a second copy.</div></div>
+         <md-text-button data-addloc>Add a location</md-text-button></div>`;
   bindOpenButtons();
   document.querySelectorAll("[data-accept]").forEach(b => b.onclick = async () => {
     const name = b.dataset.accept;
@@ -1168,6 +1198,7 @@ async function resolveConflict(c, keep) {
 }
 
 function render() {
+  if ($("locDlg") && $("locDlg").open) renderLocations();
   renderStatus();
   renderProgress();
   renderRun();
@@ -1391,6 +1422,55 @@ function bindOpenButtons() {
   });
 }
 bindOpenButtons();
+
+// ---------- locations: add, test and remove the places files are copied to ----------
+function renderLocations() {
+  const dests = state.destinations || [];
+  $("locList").innerHTML = dests.length ? dests.map(d => {
+    const s = destState(d);
+    return `<div class="loc-row"><md-icon>${s.icon}</md-icon>
+      <div class="grow"><b>${esc(d.name)}${s.text ? " · " + esc(s.text) : ""}</b><span>${esc(d.root)}</span></div>
+      <md-text-button data-rmloc="${esc(d.name)}">Remove</md-text-button></div>`;
+  }).join("") : `<p class="muted">No locations yet - files are only on this laptop.</p>`;
+  $("locSuggest").innerHTML = (state.suggestions || []).map(x =>
+    `<div class="loc-row"><md-icon>cloud</md-icon>
+      <div class="grow"><b>${esc(x.name)} found on this PC</b><span>${esc(x.path)}</span></div>
+      <md-text-button data-usesug="${esc(x.name)}" data-path="${esc(x.path)}">Use it</md-text-button></div>`).join("");
+  document.querySelectorAll("[data-rmloc]").forEach(b => b.onclick = async () => {
+    const name = b.dataset.rmloc;
+    if (!confirm(`Stop copying to ${name}?\n\nIts files are left exactly where they are.`)) return;
+    const { data } = await api("/api/location-remove", { name });
+    $("locMsg").textContent = data.message || "";
+    await load(true);
+  });
+  document.querySelectorAll("[data-usesug]").forEach(b => b.onclick = async () => {
+    const { data } = await api("/api/location-add", { name: b.dataset.usesug, path: b.dataset.path });
+    $("locMsg").textContent = data.message || "";
+    await load(true);
+  });
+}
+function openLocations() {
+  $("locMsg").textContent = "";
+  renderLocations();
+  if (!$("locDlg").open) $("locDlg").show();
+}
+$("locBtn").onclick = openLocations;
+document.addEventListener("click", e => { if (e.target.closest("[data-addloc]")) openLocations(); });
+$("locClose").onclick = () => $("locDlg").close();
+$("locTest").onclick = async () => {
+  $("locMsg").textContent = "Testing…";
+  const { data } = await api("/api/location-test", { path: $("locPath").value });
+  $("locMsg").textContent = (data.ok ? "Works: " : "Can't use it: ") + (data.message || "");
+};
+$("locAdd").onclick = async () => {
+  $("locAdd").disabled = true;
+  $("locMsg").textContent = "Adding…";
+  const { data } = await api("/api/location-add", { name: $("locName").value, path: $("locPath").value });
+  $("locMsg").textContent = data.message || "";
+  $("locAdd").disabled = false;
+  if (data.ok) { $("locName").value = ""; $("locPath").value = ""; }
+  await load(true);
+};
 
 $("dlRefresh").onclick = async () => {
   $("dlRefresh").disabled = true;

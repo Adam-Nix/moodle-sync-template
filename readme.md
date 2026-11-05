@@ -19,4 +19,7 @@ Includes a small browser dashboard (`network_sync`) for syncing and resolving co
 - The first run asks for your Moodle login, the folder to use and which Moodle category is
   the current year; the answers are saved in `config.ini` (`[Folders]`, `[Courses]`).
 - OneDrive is detected from your environment and used automatically; set `onedrive =` blank to turn it off.
+- Where files are copied to is up to you: in the dashboard, click the location icon at the top to add
+  a folder, USB drive, OneDrive or network share, test it, or remove it (removing never deletes files).
+  With none, files stay on this PC. They are saved in `config.ini` as `[Location Name]` sections.
 - Playwright and Chromium are installed the first time web-page slide printing runs.

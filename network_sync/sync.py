@@ -28,6 +28,7 @@ from network_sync import state
 CONFIG_FILE = str(REPO_ROOT / "config.ini")
 SMB_PORT = 445
 CONNECT_TIMEOUT = 3.0
+SHARE_ENV = "MOODLE_SYNC_SHARE"  # overrides [Network] share
 PROBE_PREFIX = ".write-test-"  # the temporary file a write check leaves for a moment
 
 ProgressCallback = Callable[[str], None]
@@ -37,9 +38,9 @@ ProgressCallback = Callable[[str], None]
 # configuration
 # --------------------------------------------------------------------------- #
 def get_share_path(config_filepath: str = CONFIG_FILE) -> str:
-    """The server's 4th year folder, from $TUS_SHARE_PATH, then config.ini; empty if neither is set."""
+    """The server's 4th year folder, from $MOODLE_SYNC_SHARE, then config.ini; empty if neither is set."""
 
-    from_environment = os.environ.get("TUS_SHARE_PATH")
+    from_environment = os.environ.get(SHARE_ENV)
     if from_environment:
         return from_environment.rstrip("\\/")
 
@@ -64,6 +65,7 @@ class Destination:
 
     name: str
     root: str
+    kind: str = "location"  # "share" / "onedrive" (the [Network] lines) or "location" ([Location ...])
 
     @property
     def path(self) -> str:
@@ -87,20 +89,26 @@ def get_destinations(config_filepath: str = CONFIG_FILE) -> list[Destination]:
     found = []
     share = get_share_path(config_filepath)
     if share:
-        found.append(Destination("Home server", share))
+        found.append(Destination("Home server", share, "share"))
     if config_parser.has_option("Network", "onedrive"):
         # raw=True: a path like %OneDrive%\... is not ConfigParser interpolation.
         onedrive = config_parser.get("Network", "onedrive", raw=True).strip().rstrip("\\/")
         if onedrive:  # a blank value switches OneDrive off
-            found.append(Destination("OneDrive", os.path.expandvars(onedrive)))
+            found.append(Destination("OneDrive", os.path.expandvars(onedrive), "onedrive"))
     else:
-        detected = _detect_onedrive()
+        detected = detect_onedrive()
         if detected:
-            found.append(Destination("OneDrive", detected))
+            found.append(Destination("OneDrive", detected, "onedrive"))
+    for section in config_parser.sections():
+        prefix, _, name = section.partition(" ")
+        if prefix.lower() == "location" and name.strip():
+            path = os.path.expandvars(config_parser.get(section, "path", raw=True, fallback="").strip().strip('"'))
+            if path.rstrip("\\/"):
+                found.append(Destination(name.strip(), path.rstrip("\\/"), "location"))
     return found
 
 
-def _detect_onedrive() -> str:
+def detect_onedrive() -> str:
     """OneDrive's folder from the environment plus this PC's course folder name; "" if none."""
 
     from moodle_downloader.config import year_root
