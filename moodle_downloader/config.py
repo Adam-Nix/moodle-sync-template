@@ -119,7 +119,7 @@ def year_root(config_file: Path = CONFIG_FILE) -> Path:
     parser = ConfigParser()
     parser.read(config_file, encoding="utf-8")
     value = parser.get("Folders", "local", raw=True, fallback="").strip() or DEFAULT_YEAR_ROOT
-    root = Path(os.path.expandvars(value))
+    root = Path(os.path.expanduser(os.path.expandvars(value)))
     root.mkdir(parents=True, exist_ok=True)
     return root
 

@@ -846,3 +846,6 @@ _data/
 *.mdb
 *.pkt
 *.pka
+
+# The app icon is part of the project (Linux launcher)
+!network_sync/app.png

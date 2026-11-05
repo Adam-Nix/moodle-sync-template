@@ -8,8 +8,6 @@ and the dashboard opens in your browser.  Closing the tab stops the server.
 from __future__ import annotations
 
 import json
-import os
-import subprocess
 import sys
 import threading
 import time
@@ -24,7 +22,7 @@ if __package__ in (None, ""):
     # Run as a plain script, so the repo root is not on the path yet.
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from moodle_downloader import master_guard, webpages  # noqa: E402
+from moodle_downloader import master_guard, platform_utils, webpages  # noqa: E402
 from moodle_downloader.client import MoodleClient  # noqa: E402
 from moodle_downloader.config import CONFIG_FILE, SECTION, Settings  # noqa: E402
 from moodle_downloader.deadlines import fetch_deadlines  # noqa: E402
@@ -644,6 +642,11 @@ class Dashboard:
                 ],
                 "suggestions": locations.suggestions(),
                 "configured": settings.is_configured(),
+                "platform": {
+                    "windows": platform_utils.IS_WINDOWS,
+                    "exampleFolder": platform_utils.example_folder(),
+                    "exampleShare": platform_utils.example_share(),
+                },
                 "scannedAt": self.scanned_at.isoformat() if self.scanned_at else None,
                 "webpages": [
                     {"name": site.name, "course": site.course, "index": site.index}
@@ -872,31 +875,38 @@ class Handler(BaseHTTPRequestHandler):
             return {"ok": False, "message": str(error)}
         if not target.is_file():
             return {"ok": False, "message": "That file isn't there any more."}
-        if target.suffix.lower() in conflicts.RUNNABLE:  # show it rather than run it
-            subprocess.Popen(["explorer", f"/select,{target}"])
-        else:
-            os.startfile(target)  # noqa: S606 - opens in its usual app
+        try:
+            if target.suffix.lower() in conflicts.RUNNABLE:  # show it rather than run it
+                platform_utils.reveal(target)
+            else:
+                platform_utils.open_path(target)
+        except OSError as error:
+            return {"ok": False, "message": str(error)}
         return {"ok": True}
 
     def _open(self, target: str | None) -> dict:
         dashboard = self.dashboard
+        folder = None
         if target == "local" and dashboard.master_folder.parent.is_dir():
-            os.startfile(dashboard.master_folder.parent)  # noqa: S606 - Windows explorer; C:\4th year
-            return {"ok": True}
-        if target == "bin":
+            folder = dashboard.master_folder.parent
+        elif target == "bin":
             conflicts.BIN.mkdir(parents=True, exist_ok=True)
-            os.startfile(conflicts.BIN)  # noqa: S606
-            return {"ok": True}
-        if target == "duplicate-bin":
+            folder = conflicts.BIN
+        elif target == "duplicate-bin":
             master_guard.bin_folder().mkdir(parents=True, exist_ok=True)
-            os.startfile(master_guard.bin_folder())  # noqa: S606
-            return {"ok": True}
-        for destination in dashboard.destinations:
-            plan = dashboard.plans.get(destination.name, {})
-            if target == destination.name and plan.get("status") and plan["status"].share_mounted:
-                subprocess.Popen(["explorer", destination.root])
-                return {"ok": True}
-        return {"ok": False, "message": "That folder isn't reachable right now."}
+            folder = master_guard.bin_folder()
+        else:
+            for destination in dashboard.destinations:
+                plan = dashboard.plans.get(destination.name, {})
+                if target == destination.name and plan.get("status") and plan["status"].share_mounted:
+                    folder = destination.root
+        if folder is None:
+            return {"ok": False, "message": "That folder isn't reachable right now."}
+        try:
+            platform_utils.open_path(folder)
+        except OSError as error:
+            return {"ok": False, "message": f"{error} The folder is {folder}"}
+        return {"ok": True}
 
 
 class _Server(ThreadingHTTPServer):

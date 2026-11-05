@@ -13,7 +13,7 @@ from configparser import ConfigParser
 from datetime import datetime
 from pathlib import Path
 
-from moodle_downloader import webpages
+from moodle_downloader import platform_utils, webpages
 from moodle_downloader.client import MoodleClient
 from moodle_downloader.config import CONFIG_FILE, DEFAULT_YEAR_ROOT, SECRETS_FILE, SECTION, master_folder
 from moodle_downloader.ini_edit import drop_section, read_lines, set_option, write_lines
@@ -145,9 +145,9 @@ def save_general(data: dict, config_file: Path | str = CONFIG_FILE) -> None:
     program = _single_line(moodle.get("program", ""), "The programme name") or "My courses"
 
     folder = _single_line(data.get("folder", ""), "The folder").strip('"') or DEFAULT_YEAR_ROOT
-    expanded = Path(os.path.expandvars(folder))
+    expanded = Path(os.path.expanduser(os.path.expandvars(folder)))
     if not expanded.is_absolute():
-        raise SettingsError("Use a full folder path, like C:\\Users\\you\\Documents\\Moodle.")
+        raise SettingsError(f"Use a full folder path, like {DEFAULT_YEAR_ROOT}.")
     try:
         expanded.mkdir(parents=True, exist_ok=True)
     except OSError as error:

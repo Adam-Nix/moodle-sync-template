@@ -1660,6 +1660,7 @@ function renderLocations() {
 }
 function openLocations() {
   $("locMsg").textContent = "";
+  if (state.platform) $("locPath").placeholder = state.platform.exampleFolder;
   renderLocations();
   if (!$("locDlg").open) $("locDlg").show();
 }

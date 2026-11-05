@@ -17,6 +17,7 @@ import os
 import re
 from pathlib import Path
 
+from moodle_downloader import platform_utils
 from moodle_downloader.ini_edit import drop_section, read_lines, set_option, write_lines
 from network_sync import sync as ns
 
@@ -41,11 +42,13 @@ def clean_name(name: str, existing: list[ns.Destination]) -> str:
 
 
 def clean_path(path: str) -> str:
-    path = os.path.expandvars(path.strip().strip('"')).rstrip("\\/")
+    path = os.path.expanduser(os.path.expandvars(path.strip().strip('"')))
+    path = path.rstrip("\\/") if len(path) > 1 else path
+    examples = f"{platform_utils.example_folder()} or {platform_utils.example_share()}"
     if not path:
-        raise LocationError("Enter the folder to copy to, e.g. E:\\Moodle or \\\\server\\share\\Moodle.")
-    if not (os.path.isabs(path) or path.startswith("\\\\")):
-        raise LocationError("Use a full path, like E:\\Moodle or \\\\server\\share\\Moodle.")
+        raise LocationError(f"Enter the folder to copy to, e.g. {examples}.")
+    if not platform_utils.is_absolute(path):
+        raise LocationError(f"Use a full path, like {examples}.")
     return path
 
 
@@ -64,7 +67,7 @@ def add(name: str, path: str, config_file: str = ns.CONFIG_FILE) -> ns.Destinati
         raise LocationError("That folder is already one of your locations.")
 
     folder = Path(path)
-    if not folder.is_dir() and not path.startswith("\\\\"):
+    if not folder.is_dir() and not (platform_utils.IS_WINDOWS and path.startswith("\\\\")):
         try:
             if not folder.parent.is_dir():
                 raise OSError(f"{folder.parent} doesn't exist")

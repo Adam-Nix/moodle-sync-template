@@ -112,9 +112,10 @@ def detect_onedrive() -> str:
     """OneDrive's folder from the environment plus this PC's course folder name; "" if none."""
 
     from moodle_downloader.config import year_root
+    from moodle_downloader.platform_utils import find_onedrive
 
-    base = os.environ.get("OneDriveConsumer") or os.environ.get("OneDrive") or ""
-    return os.path.join(base, year_root().name) if base and os.path.isdir(base) else ""
+    base = find_onedrive()
+    return os.path.join(base, year_root().name) if base else ""
 
 
 def get_master_folder() -> Path:
@@ -234,14 +235,14 @@ class FileEntry:
     def course(self) -> str:
         """The course folder the file lives in."""
 
-        head, _, tail = self.relative_path.replace("\\", "/").partition("/")
+        head, _, tail = self.relative_path.partition("/")
         return head if tail else "(root)"
 
     @property
     def name(self) -> str:
         """The file name on its own."""
 
-        return self.relative_path.replace("\\", "/").rsplit("/", 1)[-1]
+        return self.relative_path.rsplit("/", 1)[-1]
 
 
 def _walk(root: Path) -> Iterable[Path]:
@@ -326,7 +327,7 @@ def scan_local(master_folder: Path | None = None) -> list[FileEntry]:
         stat = path.stat()
         entries.append(
             FileEntry(
-                relative_path=str(path.relative_to(master_folder)).replace("\\", "/"),
+                relative_path=path.relative_to(master_folder).as_posix(),
                 size=stat.st_size,
                 modified=datetime.fromtimestamp(stat.st_mtime),
             )
@@ -357,7 +358,7 @@ def build_plan(
     share = Path(share_path)
     remote: dict[str, int] = {}
     for path in _walk(share):
-        remote[str(path.relative_to(share)).replace("\\", "/")] = path.stat().st_size
+        remote[path.relative_to(share).as_posix()] = path.stat().st_size
 
     for entry in entries:
         if entry.relative_path not in remote:
