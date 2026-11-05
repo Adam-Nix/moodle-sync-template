@@ -537,8 +537,15 @@
   <div slot="headline">Settings</div>
   <div slot="content">
     <div class="dialog-warn" id="setWelcome" hidden style="margin-bottom:12px">
-      <b>Welcome!</b> Fill in the first two parts below, press <b>Test login</b>, then <b>Save</b>.
-      Everything else can wait.
+      <b>Welcome! Let's get you set up - it takes about two minutes.</b>
+      This program downloads your Moodle files to a folder on this computer. To start:
+      <ol style="margin:8px 0 0;padding-left:20px">
+        <li>Enter your <b>Moodle address</b> and <b>key</b> in part 1 (the steps to find the key are there), then press <b>Test login</b>.</li>
+        <li>Check the <b>folder</b> in part 2 is where you want your files.</li>
+        <li>Pick which courses are <b>this year's</b> in part 3.</li>
+        <li>Press <b>Save</b>, close this window, then press <b>Download</b> on the main page.</li>
+      </ol>
+      Parts 4 to 6 are optional. You can come back any time with the gear icon at the top.
     </div>
 
     <h3 class="set-h">1. Your Moodle login</h3>
@@ -598,6 +605,16 @@
         <div><md-filled-tonal-button id="sfSave">Save website</md-filled-tonal-button>
              <md-text-button id="sfCancel">Cancel</md-text-button></div>
       </div>
+    </div>
+    <h3 class="set-h">6. Copies in other places (optional)</h3>
+    <div class="set-grid">
+      <p class="muted" style="font-size:13px;margin:0">Off by default - your files stay on this computer. You can also
+        keep copies of the downloaded Moodle files on a USB drive, OneDrive or a network share.</p>
+      <div><md-text-button id="setOpenLoc">Choose where to copy files&hellip;</md-text-button></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:14px">
+        <md-checkbox touch-target="wrapper" id="setSyncOther"></md-checkbox>
+        Also keep my other files in this folder (not just Moodle downloads) the same in every place
+      </label>
     </div>
     <p class="muted" id="setMsg" style="margin-top:16px;font-size:13px;min-height:20px" role="status"></p>
   </div>
@@ -1584,6 +1601,7 @@ async function openSettings(welcome) {
   $("setFolder").value = setData.folder;
   $("setFolder").placeholder = setData.defaultFolder;
   $("setSemester").value = setData.semesterEnd;
+  $("setSyncOther").checked = !!setData.syncOther;
   delete $("setCat").dataset.value; delete $("setCat").dataset.skip;
   categories = [];
   renderCategories();
@@ -1615,6 +1633,7 @@ $("setSave").onclick = async () => {
     category: $("setCat").value || "",
     skip: pickedSkips(),
     semesterEnd: val("setSemester"),
+    syncOther: $("setSyncOther").checked,
   });
   $("setMsg").textContent = data.message || "";
   $("setSave").disabled = false;
@@ -1665,6 +1684,7 @@ function openLocations() {
   if (!$("locDlg").open) $("locDlg").show();
 }
 $("locBtn").onclick = openLocations;
+$("setOpenLoc").onclick = openLocations;
 document.addEventListener("click", e => { if (e.target.closest("[data-addloc]")) openLocations(); });
 $("locClose").onclick = () => $("locDlg").close();
 $("locTest").onclick = async () => {

@@ -92,13 +92,11 @@ def get_destinations(config_filepath: str = CONFIG_FILE) -> list[Destination]:
         found.append(Destination("Home server", share, "share"))
     if config_parser.has_option("Network", "onedrive"):
         # raw=True: a path like %OneDrive%\... is not ConfigParser interpolation.
+        # Never switched on by itself: OneDrive is only used when a path is set here
+        # (or it is added from the Locations screen, which offers it).
         onedrive = config_parser.get("Network", "onedrive", raw=True).strip().rstrip("\\/")
-        if onedrive:  # a blank value switches OneDrive off
+        if onedrive:
             found.append(Destination("OneDrive", os.path.expandvars(onedrive), "onedrive"))
-    else:
-        detected = detect_onedrive()
-        if detected:
-            found.append(Destination("OneDrive", detected, "onedrive"))
     for section in config_parser.sections():
         prefix, _, name = section.partition(" ")
         if prefix.lower() == "location" and name.strip():
@@ -116,6 +114,19 @@ def detect_onedrive() -> str:
 
     base = find_onedrive()
     return os.path.join(base, year_root().name) if base else ""
+
+
+def sync_other_files(config_filepath: str = CONFIG_FILE) -> bool:
+    """True if [Network] sync_other_files is on: keep the whole course folder identical, not just master.
+
+    Off by default.  The tool's job is downloading Moodle files into the master folder;
+    copying those to other locations needs a location added, and copying everything
+    else in the folder needs this switch as well.
+    """
+
+    config_parser = ConfigParser()
+    config_parser.read(config_filepath)
+    return config_parser.getboolean("Network", "sync_other_files", fallback=False)
 
 
 def get_master_folder() -> Path:
@@ -625,5 +636,6 @@ def sync_everything(dry_run: bool = False, on_progress: ProgressCallback | None 
         report(f"{destination.name}: {'previewing' if dry_run else 'sending'} master folder...")
         push(master, destination.path, dry_run=dry_run, on_progress=report, status=status)
 
-    report("\nRest of the 4th year folder")
-    year_sync.reconcile(year_sync.places(destinations), dry_run=dry_run, on_progress=report)
+    if sync_other_files():
+        report("\nRest of the course folder")
+        year_sync.reconcile(year_sync.places(destinations), dry_run=dry_run, on_progress=report)

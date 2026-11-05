@@ -14,7 +14,7 @@ CONFIG_FILE = REPO_ROOT / "config.ini"
 SECRETS_FILE = REPO_ROOT / "secrets.ini"
 SECTION = "User"
 DEFAULT_YEAR_ROOT = str(Path.home() / "Documents" / "Moodle")
-MASTER_FOLDER = "master"
+MASTER_FOLDER = "materials"  # every downloaded Moodle file lives in here
 
 
 @dataclass

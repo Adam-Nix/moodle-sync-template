@@ -1,4 +1,4 @@
-"""Download current Moodle courses, then make every copy of the 4th year folder the same.
+"""Download current Moodle courses; copy them to other locations only if you've added some.
 
     python main.py
 """
@@ -10,6 +10,7 @@ import time
 from moodle_downloader import download_all, load_settings
 from moodle_downloader.naming import course_title
 from network_sync import sync_everything
+from network_sync.sync import get_destinations
 
 
 def is_active(course: dict, now: float) -> bool:
@@ -35,8 +36,9 @@ def main() -> None:
     print_courses("Courses: active", [c for c in courses if is_active(c, now)])
     print_courses("Courses: favourite", [c for c in courses if c.get("isfavourite")])
 
-    print("\nSync: this PC, home server and OneDrive")
-    sync_everything()
+    if get_destinations():
+        print("\nCopying Moodle files to your other locations")
+        sync_everything()
 
 
 if __name__ == "__main__":

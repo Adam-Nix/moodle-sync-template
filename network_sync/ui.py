@@ -316,7 +316,10 @@ class Dashboard:
         """What "make identical" would do, so the page can ask before anything moves."""
 
         # The rest of 4th year: scanned here, outside the lock, as the share can be slow.
-        year = year_sync.plan(year_sync.places(self.destinations)).to_json()
+        if ns.sync_other_files():
+            year = year_sync.plan(year_sync.places(self.destinations)).to_json()
+        else:  # only the Moodle files (master folder) are synced unless switched on
+            year = {"ready": [], "total": 0, "removals": [], "copies": []}
         with self.lock:
             ready = self._ready_destinations()
             fetch: dict[str, str] = {}  # path -> where it would come from
@@ -415,20 +418,23 @@ class Dashboard:
         master_summary, master_failed = self._run_sync(dry_run=False, finish=False)
         failed += master_failed
 
-        # Then everything else in 4th year: FYP, CV, lab reports...
-        self.add_log("Making the rest of 4th year identical...")
-        try:
-            result = year_sync.reconcile(year_sync.places(self.destinations), on_progress=progress)
-            for path, place, size in result.copied:
-                self.add_run_file("up", path, size, place)
-            year_summary = result.summary()
-            failed += len(result.failed)
-        except Exception as error:  # a dropped share must not kill the server
-            year_summary = f"stopped - {error}"
-            failed += 1
-            self.add_log(f"4th year sync stopped - {error}", "error")
+        year_summary = ""
+        if ns.sync_other_files():
+            self.add_log("Making the rest of the course folder identical...")
+            try:
+                result = year_sync.reconcile(year_sync.places(self.destinations), on_progress=progress)
+                for path, place, size in result.copied:
+                    self.add_run_file("up", path, size, place)
+                year_summary = result.summary()
+                failed += len(result.failed)
+            except Exception as error:  # a dropped share must not kill the server
+                year_summary = f"stopped - {error}"
+                failed += 1
+                self.add_log(f"Folder sync stopped - {error}", "error")
 
-        summary = f"{fetched} restored here | {master_summary} | 4th year: {year_summary}"
+        summary = f"{fetched} restored here | {master_summary}"
+        if year_summary:
+            summary += f" | other files: {year_summary}"
         with self.lock:
             self.job.update(running=False, summary=summary, failed=failed, current="")
         self.refresh(check_connection=True)

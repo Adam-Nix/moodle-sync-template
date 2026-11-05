@@ -70,6 +70,7 @@ def read(config_file: Path | str = CONFIG_FILE, secrets_file: Path | str = SECRE
         "category": get("Courses", "current_category"),
         "skip": skip,
         "semesterEnd": get("Deadlines", "semester_end"),
+        "syncOther": get("Network", "sync_other_files").lower() in ("1", "true", "yes", "on"),
         "courseFolders": courses,
         "sites": [
             {
@@ -173,6 +174,7 @@ def save_general(data: dict, config_file: Path | str = CONFIG_FILE) -> None:
         ("Courses", "current_category", category),
         ("Courses", "skip_categories", ", ".join(skip)),
         ("Deadlines", "semester_end", end),
+        ("Network", "sync_other_files", "true" if data.get("syncOther") else "false"),
     ):
         lines = set_option(lines, section, key, value)
     write_lines(config_file, lines)
