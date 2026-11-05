@@ -6,14 +6,13 @@ import re
 from html import unescape
 from pathlib import Path
 
-from moodle_downloader.config import REPO_ROOT, master_folder
+from moodle_downloader.config import REPO_ROOT, current_year_category, master_folder
 
 DATA_FOLDER = "_data"
 ARCHIVE_FOLDER = "archive"
-SKIPPED_CATEGORIES = {"N-TUTORR"}
 
-# The Moodle course category whose courses go in the 4th year master folder.
-CURRENT_YEAR_CATEGORY = "Year 4"
+# The current year's category comes from [Courses] current_category in config.ini
+# (chosen on the first run); blank puts every course in the master folder.
 
 _ILLEGAL = re.compile(r'[/:*?"<>|%\\\x00-\x1f\x7f]')
 _ACADEMIC_YEAR = re.compile(r"\(\d+-\d+\)")
@@ -52,7 +51,8 @@ def course_folder(course: dict, root: Path = REPO_ROOT) -> Path:
     """
 
     name = course_folder_name(course)
-    if course.get("coursecategory", "") == CURRENT_YEAR_CATEGORY:
+    current = current_year_category()
+    if not current or course.get("coursecategory", "") == current:
         return master_folder() / name
     if (root / ARCHIVE_FOLDER / name).is_dir():
         return root / ARCHIVE_FOLDER / name

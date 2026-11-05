@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import asyncio
 import re
+import subprocess
+import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -342,13 +344,29 @@ def plan(sites: list[Site] | None = None, master: Path | None = None) -> Plan:
 # --------------------------------------------------------------------------- #
 # printing
 # --------------------------------------------------------------------------- #
+def _run(command: list[str], log: Log) -> bool:
+    """Run an installer command, logging the last line of any error; True if it succeeded."""
+
+    done = subprocess.run(command, capture_output=True, text=True)
+    if done.returncode:
+        lines = (done.stderr or done.stdout).strip().splitlines()
+        log(lines[-1] if lines else "install failed")
+    return done.returncode == 0
+
+
 def export(pages: list[Page], log: Log = print, on_file: OnFile | None = None) -> Result:
     """Print every page to its PDF with Chromium; one bad deck never stops the rest."""
 
     try:
         from playwright.async_api import async_playwright
     except ImportError as error:
-        raise WebpageError(INSTALL_HINT) from error
+        log("Installing Playwright (one time)...")
+        if not _run([sys.executable, "-m", "pip", "install", "playwright"], log):
+            raise WebpageError(INSTALL_HINT) from error
+        try:
+            from playwright.async_api import async_playwright
+        except ImportError:
+            raise WebpageError(INSTALL_HINT) from error
 
     return asyncio.run(_export(async_playwright, pages, log, on_file))
 
@@ -362,8 +380,13 @@ async def _export(async_playwright, pages: list[Page], log: Log, on_file: OnFile
     async with async_playwright() as playwright:
         try:
             browser = await playwright.chromium.launch(headless=True)
-        except Exception as error:  # installed, but the browser itself is missing
-            raise WebpageError(f"Chromium would not start. {INSTALL_HINT} ({error})") from error
+        except Exception:  # installed, but the browser itself is probably missing
+            log("Downloading Chromium (one time)...")
+            _run([sys.executable, "-m", "playwright", "install", "chromium"], log)
+            try:
+                browser = await playwright.chromium.launch(headless=True)
+            except Exception as error:
+                raise WebpageError(f"Chromium would not start. {INSTALL_HINT} ({error})") from error
         try:
             for name, site_pages in by_site.items():
                 site = site_pages[0].site

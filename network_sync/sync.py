@@ -91,9 +91,22 @@ def get_destinations(config_filepath: str = CONFIG_FILE) -> list[Destination]:
     if config_parser.has_option("Network", "onedrive"):
         # raw=True: a path like %OneDrive%\... is not ConfigParser interpolation.
         onedrive = config_parser.get("Network", "onedrive", raw=True).strip().rstrip("\\/")
-        if onedrive:
+        if onedrive:  # a blank value switches OneDrive off
             found.append(Destination("OneDrive", os.path.expandvars(onedrive)))
+    else:
+        detected = _detect_onedrive()
+        if detected:
+            found.append(Destination("OneDrive", detected))
     return found
+
+
+def _detect_onedrive() -> str:
+    """OneDrive's folder from the environment plus this PC's course folder name; "" if none."""
+
+    from moodle_downloader.config import year_root
+
+    base = os.environ.get("OneDriveConsumer") or os.environ.get("OneDrive") or ""
+    return os.path.join(base, year_root().name) if base and os.path.isdir(base) else ""
 
 
 def get_master_folder() -> Path:

@@ -12,11 +12,17 @@ from urllib.parse import quote
 
 from moodle_downloader import master_guard
 from moodle_downloader.client import MoodleClient, MoodleError
-from moodle_downloader.config import REPO_ROOT, Settings, master_folder, year_root
+from moodle_downloader.config import (
+    REPO_ROOT,
+    Settings,
+    choose_current_category,
+    master_folder,
+    skipped_categories,
+    year_root,
+)
 from moodle_downloader.course_page import RemoteFile, build_course_page
 from moodle_downloader.file_index import FileIndex, entry_for, place_files, unchanged
 from moodle_downloader.naming import (
-    SKIPPED_CATEGORIES,
     contents_json_path,
     course_folder,
     course_title,
@@ -77,13 +83,15 @@ def download_all(
         if str(course.get("courseimage", "")).startswith("data:image/"):
             course["courseimage"] = ""
     courses.sort(key=lambda course: course.get("fullname", ""))
+    choose_current_category([c.get("coursecategory", "") for c in courses])
     _save_json({"courses": courses}, program_json_path(settings.program, root))
 
     totals = {"new": 0, "skipped": 0, "duplicates": 0, "failed": 0, "bytes": 0}
     master_guard.sweep(master_folder(), root, log)  # start from a master folder with no duplicates
     index = FileIndex(root)
+    skipped = skipped_categories()
     for course in courses:
-        if course.get("coursecategory") in SKIPPED_CATEGORIES:
+        if course.get("coursecategory") in skipped:
             continue
         _download_course(client, settings, course, root, log, totals, index, on_file)
 
@@ -169,9 +177,10 @@ def _download_course(
 
 def _write_root_readme(program: str, courses: list[dict], root: Path) -> None:
     by_category: dict[str, list[dict]] = defaultdict(list)
+    skipped = skipped_categories()
     for course in courses:
         category = course.get("coursecategory", "")
-        if category not in SKIPPED_CATEGORIES:
+        if category not in skipped:
             by_category[category].append(course)
 
     lines = [f"# {program}", ""]
