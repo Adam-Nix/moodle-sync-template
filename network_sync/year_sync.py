@@ -70,12 +70,16 @@ def _skipped(name: str) -> bool:
     return lower in SKIPPED_NAMES or lower.startswith(SKIPPED_PREFIXES) or lower.endswith(".part")
 
 
-def scan(root: Path) -> dict[str, Copy]:
+def scan(root: Path, clashes: list[str] | None = None) -> dict[str, Copy]:
     """Every file under root except the master folder, keyed by lower-case path.
 
     Windows, SMB and OneDrive all ignore case, so `FYP/Plan.xlsx` and
     `fyp/plan.xlsx` are one file.  Raises OSError if any folder can't be read,
     as files missing from a half-read listing would look like files to copy back.
+
+    Linux does tell `Plan.xlsx` and `plan.XLSX` apart, but they could not both be copied
+    to a Windows or OneDrive copy.  Only the first (in name order) is kept; the others are
+    added to `clashes` so the caller can say so instead of dropping them silently.
     """
 
     errors: list[OSError] = []
@@ -84,7 +88,8 @@ def scan(root: Path) -> dict[str, Copy]:
         here = Path(folder).relative_to(root)
         if here == Path("."):
             subfolders[:] = [name for name in subfolders if name.lower() != MASTER_FOLDER]
-        for name in files:
+        subfolders.sort()
+        for name in sorted(files):
             if _skipped(name):
                 continue
             try:
@@ -93,6 +98,10 @@ def scan(root: Path) -> dict[str, Copy]:
                 errors.append(error)
                 continue
             relative = (here / name).as_posix()
+            if relative.lower() in found:
+                if clashes is not None:
+                    clashes.append(f"{relative} (same name as {found[relative.lower()].path} apart from capitals)")
+                continue
             found[relative.lower()] = Copy(relative, stat.st_size, stat.st_mtime)
     if errors:
         raise errors[0]
@@ -288,11 +297,14 @@ def plan(roots: dict[str, Path], on_progress: ProgressCallback | None = None) ->
             offline[name] = status.message
             continue
         report(f"Scanning {name} ({root})...")
+        clashes: list[str] = []
         try:
-            found = scan(root)
+            found = scan(root, clashes)
         except OSError as error:
             offline[name] = f"could not read every folder - {error}"
             continue
+        for clash in clashes:
+            report(f"{name}: not synced - {clash}. Rename one of them.")
         verdict = state.guard(name + COUNT_SUFFIX, len(found), baseline)
         if verdict["suspect"]:
             offline[name] = verdict["message"]

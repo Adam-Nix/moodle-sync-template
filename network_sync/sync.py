@@ -165,6 +165,32 @@ class RemoteStatus:
         return self.host_up and self.share_mounted and self.writable
 
 
+def ensure_master_folder(destination: Destination) -> None:
+    """Create `<location>/materials` the first time a reachable location is used.
+
+    A new, empty location has no master folder yet, so every check on it would say
+    "not available" and nothing would ever be copied.  An unmounted share is an empty,
+    ordinary folder on Linux, and creating a folder there would fill the local disk
+    instead, so we only create it inside something mounted or already in use.
+    """
+
+    root = Path(destination.root)
+    try:
+        if not root.is_dir() or Path(destination.path).exists():
+            return
+        if os.path.ismount(root) or any(root.iterdir()):
+            Path(destination.path).mkdir()
+    except OSError:
+        pass  # check_remote reports why it can't be used
+
+
+def check_destination(destination: Destination) -> RemoteStatus:
+    """check_remote for one location's master folder, creating that folder if it is new."""
+
+    ensure_master_folder(destination)
+    return check_remote(destination.path)
+
+
 def check_remote(
     share_path: str | None = None, timeout: float = CONNECT_TIMEOUT
 ) -> RemoteStatus:
@@ -593,7 +619,7 @@ def ready_destinations(
     baseline = state.load_counts()
     ready = []
     for destination in destinations:
-        status = check_remote(destination.path)
+        status = check_destination(destination)
         if not status.available:
             report(f"{destination.name}: not available - {status.message}")
             continue
