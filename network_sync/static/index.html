@@ -290,6 +290,14 @@
 
   /* ---------- dialogs ---------- */
   md-dialog { max-width: min(560px, calc(100vw - 32px)); }
+  .set-h { margin: 20px 0 8px; font-size: 14px; font-weight: 500; }
+  .set-h:first-of-type { margin-top: 4px; }
+  .set-grid { display: grid; gap: 12px; }
+  .set-checks { display: grid; gap: 4px; max-height: 160px; overflow: auto; }
+  .set-checks label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .set-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .set-box { border: 1px solid var(--md-sys-color-outline-variant, #ddd); border-radius: 12px; padding: 12px; margin-top: 8px; }
+  .ok-text { color: var(--md-sys-color-primary, #1a7f37); }
   .loc-form { display: grid; gap: 12px; }
   .loc-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant, #ddd); }
   .loc-row .grow { flex: 1; min-width: 0; }
@@ -363,6 +371,9 @@
     <div class="spacer"></div>
     <md-chip-set class="copies" id="pills"></md-chip-set>
   </div>
+  <md-icon-button id="setBtn" title="Settings: your Moodle login, folders, course websites" aria-label="Settings">
+    <md-icon>settings</md-icon>
+  </md-icon-button>
   <md-icon-button id="locBtn" title="Choose where your files are copied to" aria-label="Locations">
     <md-icon>add_location_alt</md-icon>
   </md-icon-button>
@@ -519,6 +530,81 @@
   <div slot="actions">
     <md-text-button id="confirmCancel">Cancel</md-text-button>
     <md-filled-button id="confirmOk">Send</md-filled-button>
+  </div>
+</md-dialog>
+
+<md-dialog id="setDlg" class="wide">
+  <div slot="headline">Settings</div>
+  <div slot="content">
+    <div class="dialog-warn" id="setWelcome" hidden style="margin-bottom:12px">
+      <b>Welcome!</b> Fill in the first two parts below, press <b>Test login</b>, then <b>Save</b>.
+      Everything else can wait.
+    </div>
+
+    <h3 class="set-h">1. Your Moodle login</h3>
+    <div class="set-grid">
+      <md-outlined-text-field id="setServer" label="Moodle address" placeholder="https://moodle.yourcollege.ie"></md-outlined-text-field>
+      <md-outlined-text-field id="setToken" label="Moodle key" type="password" autocomplete="off"></md-outlined-text-field>
+      <p class="muted" style="font-size:13px;margin:0">To get your key: open your Moodle address in your browser, log in,
+        click your name (top right) &rarr; <b>Preferences</b> &rarr; <b>Security keys</b>, and copy the one called
+        <b>Moodle mobile web service</b>. It is saved only on this computer and never shown again.</p>
+      <md-outlined-text-field id="setProgram" label="Name for your course list" placeholder="My Degree"></md-outlined-text-field>
+      <p class="muted" id="setLoginMsg" style="font-size:13px;margin:0;min-height:20px" role="status"></p>
+    </div>
+
+    <h3 class="set-h">2. Where your files are kept on this computer</h3>
+    <div class="set-grid">
+      <md-outlined-text-field id="setFolder" label="Folder"></md-outlined-text-field>
+      <p class="muted" style="font-size:13px;margin:0">Created for you if it doesn't exist. Changing it later doesn't move files you already downloaded.</p>
+    </div>
+
+    <h3 class="set-h">3. Which courses</h3>
+    <div class="set-grid">
+      <md-outlined-select id="setCat" label="This year's courses"></md-outlined-select>
+      <div id="setSkipWrap" hidden>
+        <p class="muted" style="font-size:13px;margin:0 0 4px">Ignore these categories completely:</p>
+        <div class="set-checks" id="setSkip"></div>
+      </div>
+      <p class="muted" id="setCatHint" style="font-size:13px;margin:0">Press <b>Test login</b> to load your Moodle categories.</p>
+    </div>
+
+    <h3 class="set-h">4. Deadlines (optional)</h3>
+    <div class="set-grid">
+      <md-outlined-text-field id="setSemester" label="Semester ends" type="date"></md-outlined-text-field>
+      <p class="muted" style="font-size:13px;margin:0">Work with no due date counts down to this day.</p>
+    </div>
+
+    <h3 class="set-h">5. Course websites (optional)</h3>
+    <p class="muted" style="font-size:13px;margin:0 0 4px">Some lecturers put slides on their own website instead of Moodle.
+      Add the site here and the slides are saved as PDFs with your other files.</p>
+    <div id="siteList"></div>
+    <md-text-button id="siteNew">Add a website</md-text-button>
+    <div class="set-box" id="siteForm" hidden>
+      <div class="set-grid">
+        <md-outlined-text-field id="sfName" label="Name" placeholder="Cloud slides" maxlength="40"></md-outlined-text-field>
+        <md-outlined-text-field id="sfIndex" label="Web address of the page that lists the slides" placeholder="https://..."></md-outlined-text-field>
+        <md-outlined-text-field id="sfCourse" label="Course folder to save into"></md-outlined-text-field>
+        <div class="set-chips" id="sfCourses"></div>
+        <md-outlined-text-field id="sfUser" label="Website username (only if it asks for a login)" autocomplete="off"></md-outlined-text-field>
+        <md-outlined-text-field id="sfPass" label="Website password" type="password" autocomplete="off"></md-outlined-text-field>
+        <details><summary class="muted" style="font-size:13px;cursor:pointer">Advanced</summary>
+          <div class="set-grid" style="margin-top:8px">
+            <md-outlined-text-field id="sfPages" label="Slides to always print (names or addresses, comma separated)" type="textarea" rows="2"></md-outlined-text-field>
+            <md-outlined-text-field id="sfSub" label="Subfolder for the PDFs"></md-outlined-text-field>
+            <md-outlined-text-field id="sfPrint" label="Print view (blank if the site prints fine as it is)"></md-outlined-text-field>
+          </div>
+        </details>
+        <p class="muted" id="sfMsg" style="font-size:13px;margin:0;min-height:20px" role="status"></p>
+        <div><md-filled-tonal-button id="sfSave">Save website</md-filled-tonal-button>
+             <md-text-button id="sfCancel">Cancel</md-text-button></div>
+      </div>
+    </div>
+    <p class="muted" id="setMsg" style="margin-top:16px;font-size:13px;min-height:20px" role="status"></p>
+  </div>
+  <div slot="actions">
+    <md-text-button id="setTest">Test login</md-text-button>
+    <md-filled-button id="setSave">Save</md-filled-button>
+    <md-text-button id="setClose">Close</md-text-button>
   </div>
 </md-dialog>
 
@@ -776,7 +862,7 @@ function renderStatus() {
   $("wpBtnLabel").textContent = pulling ? "Printing…" : "Print slides";
   $("webPullDesc").textContent = sites.length
     ? `Saves the ${sites.map(s => s.name.toUpperCase()).join(", ")} lecture slides as PDFs in the course folder.`
-    : "None set up. Add a [Webpage <name>] section to config.ini.";
+    : "None set up. Add a course website in Settings (the gear at the top).";
 
   const sending = job.running && job.kind === "sync";
   $("syncBtn").disabled = $("previewBtn").disabled = !(ready.length && pending && !busy);
@@ -937,9 +1023,9 @@ const isFlexible = (d, now) => d.due && new Date(d.due) - now > FLEXIBLE_DAYS * 
 
 function flexibleNote(now) {
   const end = semesterEnd();
-  if (!end) return "No fixed deadline. Set semester_end under [Deadlines] in config.ini for a countdown.";
+  if (!end) return "No fixed deadline. Set the semester end date in Settings for a countdown.";
   return end < now
-    ? `The semester ended on ${dayMonth(end)}. Update semester_end in config.ini.`
+    ? `The semester ended on ${dayMonth(end)}. Update the semester end date in Settings.`
     : `Hand in before the semester ends on ${dayMonth(end)} (${countdown(end - now)}).`;
 }
 
@@ -1197,7 +1283,9 @@ async function resolveConflict(c, keep) {
   load(false);
 }
 
+let welcomed = false;
 function render() {
+  if (state.configured === false && !welcomed) { welcomed = true; openSettings(true); }
   if ($("locDlg") && $("locDlg").open) renderLocations();
   renderStatus();
   renderProgress();
@@ -1422,6 +1510,127 @@ function bindOpenButtons() {
   });
 }
 bindOpenButtons();
+
+// ---------- settings: Moodle login, folders, courses, deadlines, course websites ----------
+let setData = null, categories = [], editingSite = "";
+const val = id => $(id).value || "";
+
+function renderCategories() {
+  const chosen = $("setCat").dataset.value ?? setData.category;
+  const skipped = new Set(JSON.parse($("setCat").dataset.skip || JSON.stringify(setData.skip)));
+  const names = [...new Set([...categories, chosen, ...skipped].filter(Boolean))].sort();
+  $("setCat").innerHTML = `<md-select-option value=""><div slot="headline">All my courses</div></md-select-option>` +
+    names.map(n => `<md-select-option value="${esc(n)}"><div slot="headline">${esc(n)}</div></md-select-option>`).join("");
+  $("setCat").value = chosen;
+  const others = names.filter(n => n !== chosen);
+  $("setSkipWrap").hidden = !others.length;
+  $("setSkip").innerHTML = others.map(n =>
+    `<label><md-checkbox touch-target="wrapper" data-skip="${esc(n)}" ${skipped.has(n) ? "checked" : ""}></md-checkbox>${esc(n)}</label>`).join("");
+  $("setCatHint").hidden = categories.length > 0;
+  $("setCat").onchange = () => {
+    $("setCat").dataset.skip = JSON.stringify(pickedSkips());
+    $("setCat").dataset.value = $("setCat").value;
+    renderCategories();
+  };
+}
+const pickedSkips = () => [...document.querySelectorAll("[data-skip]")].filter(c => c.checked).map(c => c.dataset.skip);
+
+function renderSites() {
+  $("siteList").innerHTML = setData.sites.map(s => `<div class="loc-row"><md-icon>language</md-icon>
+    <div class="grow"><b>${esc(s.name)}</b><span>${esc(s.index || s.pages)} &rarr; ${esc(s.course)}</span></div>
+    <md-text-button data-editsite="${esc(s.name)}">Edit</md-text-button>
+    <md-text-button data-rmsite="${esc(s.name)}">Remove</md-text-button></div>`).join("");
+  document.querySelectorAll("[data-editsite]").forEach(b => b.onclick = () => openSiteForm(b.dataset.editsite));
+  document.querySelectorAll("[data-rmsite]").forEach(b => b.onclick = async () => {
+    if (!confirm(`Remove ${b.dataset.rmsite}?\n\nSlides already saved are kept.`)) return;
+    const { data } = await api("/api/site-remove", { name: b.dataset.rmsite });
+    $("setMsg").textContent = data.message || "";
+    await refreshSettings();
+  });
+}
+
+function openSiteForm(name) {
+  const s = setData.sites.find(x => x.name === name) || { name: "", course: "", index: "", pages: "", subfolder: "slides", printQuery: "print-pdf", username: "", passwordSet: false };
+  editingSite = name || "";
+  $("sfName").value = s.name; $("sfIndex").value = s.index; $("sfCourse").value = s.course;
+  $("sfPages").value = s.pages; $("sfSub").value = s.subfolder; $("sfPrint").value = s.printQuery;
+  $("sfUser").value = s.username; $("sfPass").value = "";
+  $("sfPass").label = s.passwordSet ? "Website password (saved - leave blank to keep)" : "Website password";
+  $("sfCourses").innerHTML = setData.courseFolders.map(c =>
+    `<md-assist-chip data-course="${esc(c)}" label="${esc(prettyCourse(c))}"></md-assist-chip>`).join("");
+  document.querySelectorAll("[data-course]").forEach(c => c.onclick = () => { $("sfCourse").value = c.dataset.course; });
+  $("sfMsg").textContent = "";
+  $("siteForm").hidden = false;
+}
+const prettyCourse = slug => course(slug).title || slug;
+
+async function refreshSettings() {
+  const res = await fetch("/api/settings");
+  setData = await res.json();
+  renderSites();
+  load(true);
+}
+
+async function openSettings(welcome) {
+  $("setMsg").textContent = ""; $("setLoginMsg").textContent = "";
+  $("setWelcome").hidden = !welcome;
+  $("siteForm").hidden = true;
+  const res = await fetch("/api/settings");
+  setData = await res.json();
+  $("setServer").value = setData.moodle.server;
+  $("setToken").value = "";
+  $("setToken").label = setData.moodle.tokenSet ? "Moodle key (saved - leave blank to keep)" : "Moodle key";
+  $("setProgram").value = setData.moodle.program;
+  $("setFolder").value = setData.folder;
+  $("setFolder").placeholder = setData.defaultFolder;
+  $("setSemester").value = setData.semesterEnd;
+  delete $("setCat").dataset.value; delete $("setCat").dataset.skip;
+  categories = [];
+  renderCategories();
+  renderSites();
+  if (!$("setDlg").open) $("setDlg").show();
+  if (setData.moodle.tokenSet) testLogin(true);
+}
+
+async function testLogin(quiet) {
+  $("setLoginMsg").textContent = "Checking…";
+  const { data } = await api("/api/moodle-test", { server: val("setServer"), token: val("setToken") });
+  if (!data.ok) { $("setLoginMsg").textContent = quiet ? "" : data.message; return false; }
+  $("setLoginMsg").innerHTML = `<span class="ok-text">Connected to ${esc(data.site)}${data.name ? " as " + esc(data.name) : ""} - ${plural(data.courses, "current course")}.</span>`;
+  categories = data.categories;
+  if (!$("setProgram").value && data.site) $("setProgram").value = data.site;
+  renderCategories();
+  return true;
+}
+
+$("setBtn").onclick = () => openSettings(false);
+$("setClose").onclick = () => $("setDlg").close();
+$("setTest").onclick = () => testLogin(false);
+$("setSave").onclick = async () => {
+  $("setSave").disabled = true;
+  $("setMsg").textContent = "Saving…";
+  const { data } = await api("/api/settings-save", {
+    moodle: { server: val("setServer"), token: val("setToken"), program: val("setProgram") },
+    folder: val("setFolder"),
+    category: $("setCat").value || "",
+    skip: pickedSkips(),
+    semesterEnd: val("setSemester"),
+  });
+  $("setMsg").textContent = data.message || "";
+  $("setSave").disabled = false;
+  if (data.ok) { $("setToken").value = ""; await refreshSettings(); loadDeadlines(true); }
+};
+$("siteNew").onclick = () => openSiteForm("");
+$("sfCancel").onclick = () => { $("siteForm").hidden = true; };
+$("sfSave").onclick = async () => {
+  const { data } = await api("/api/site-save", {
+    original: editingSite, name: val("sfName"), index: val("sfIndex"), course: val("sfCourse"),
+    pages: val("sfPages"), subfolder: val("sfSub"), printQuery: val("sfPrint"),
+    username: val("sfUser"), password: val("sfPass"),
+  });
+  $("sfMsg").textContent = data.message || "";
+  if (data.ok) { $("siteForm").hidden = true; $("setMsg").textContent = data.message; await refreshSettings(); }
+};
 
 // ---------- locations: add, test and remove the places files are copied to ----------
 function renderLocations() {

@@ -29,7 +29,7 @@ from moodle_downloader.client import MoodleClient  # noqa: E402
 from moodle_downloader.config import CONFIG_FILE, SECTION, Settings  # noqa: E402
 from moodle_downloader.deadlines import fetch_deadlines  # noqa: E402
 from moodle_downloader.downloader import download_all  # noqa: E402
-from network_sync import conflicts, locations, state, year_sync  # noqa: E402
+from network_sync import conflicts, locations, settings, state, year_sync  # noqa: E402
 from network_sync import sync as ns  # noqa: E402
 
 HOST = "127.0.0.1"
@@ -91,6 +91,40 @@ class Dashboard:
                 }
             )
             del self.run[:-RUN_LIMIT]
+
+    # --------------------------------------------------------------- settings
+    def reload_config(self) -> None:
+        """Pick up changed settings: folders, locations, websites, and Moodle (deadlines)."""
+
+        self.master_folder = ns.get_master_folder()
+        self.destinations = ns.get_destinations()
+        self.webpage_sites = webpages.get_sites()
+        self.share_path = self.destinations[0].path if self.destinations else ""
+        with self.deadlines_lock:
+            self.deadlines_fetched = 0.0
+        self.refresh()
+
+    def change_settings(self, action: str, body: dict) -> tuple[bool, str]:
+        """Save from the Settings screen; the dashboard then uses the new values straight away."""
+
+        if self.job.get("running"):
+            return False, "Wait for the current job to finish first."
+        try:
+            if action == "general":
+                first_time = not settings.is_configured()
+                settings.save_general(body)
+                message = "Saved." if not first_time else "Saved. You're set up - choose 'Download from Moodle' to get your files."
+            elif action == "site":
+                name = settings.save_site(body, original=str(body.get("original", "")))
+                message = f"Saved {name}."
+            else:
+                settings.remove_site(str(body.get("name", "")))
+                message = "Removed. Slides already printed were left where they are."
+        except settings.SettingsError as error:
+            return False, str(error)
+        self.add_log(message)
+        self.reload_config()
+        return True, message
 
     # -------------------------------------------------------------- locations
     def add_location(self, name: str, path: str) -> tuple[bool, str]:
@@ -609,6 +643,7 @@ class Dashboard:
                     for destination in self.destinations
                 ],
                 "suggestions": locations.suggestions(),
+                "configured": settings.is_configured(),
                 "scannedAt": self.scanned_at.isoformat() if self.scanned_at else None,
                 "webpages": [
                     {"name": site.name, "course": site.course, "index": site.index}
@@ -683,7 +718,7 @@ def _settings() -> Settings:
     parser = ConfigParser()
     parser.read(CONFIG_FILE, encoding="utf-8")
     if not all(parser.has_option(SECTION, key) for key in ("program", "server", "token")):
-        raise RuntimeError("No Moodle login in config.ini - run `python main.py` once to set it up.")
+        raise RuntimeError("No Moodle login saved yet - open Settings (the gear at the top) to set it up.")
     return Settings(
         program=parser.get(SECTION, "program").strip(),
         server=parser.get(SECTION, "server").strip().rstrip("/"),
@@ -757,6 +792,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(self.dashboard.snapshot())
         if url.path == "/api/identical-plan":
             return self._json(self.dashboard.identical_plan())
+        if url.path == "/api/settings":
+            return self._json(settings.read())
         if url.path == "/api/deadlines":
             force = "refresh" in parse_qs(url.query)
             return self._json(self.dashboard.refresh_deadlines(force=force))
@@ -792,6 +829,16 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/download":
             ok, message = self.dashboard.start_download()
             return self._json({"ok": ok, "message": message}, 200 if ok else 409)
+        if path == "/api/moodle-test":
+            try:
+                found = settings.test_moodle(str(body.get("server", "")), str(body.get("token", "")))
+            except settings.SettingsError as error:
+                return self._json({"ok": False, "message": str(error)})
+            return self._json({"ok": True, **found})
+        if path in ("/api/settings-save", "/api/site-save", "/api/site-remove"):
+            action = {"/api/settings-save": "general", "/api/site-save": "site"}.get(path, "remove-site")
+            ok, message = self.dashboard.change_settings(action, body)
+            return self._json({"ok": ok, "message": message}, 200 if ok else 400)
         if path == "/api/location-add":
             ok, message = self.dashboard.add_location(str(body.get("name", "")), str(body.get("path", "")))
             return self._json({"ok": ok, "message": message}, 200 if ok else 400)

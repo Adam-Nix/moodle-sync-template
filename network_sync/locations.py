@@ -17,6 +17,7 @@ import os
 import re
 from pathlib import Path
 
+from moodle_downloader.ini_edit import drop_section, read_lines, set_option, write_lines
 from network_sync import sync as ns
 
 SECTION_PREFIX = "Location"
@@ -25,67 +26,6 @@ NAME_OK = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]{0,39}$")  # also safe inside 
 
 class LocationError(ValueError):
     """Something the person can fix: a bad name, a path that can't be used, ..."""
-
-
-# --------------------------------------------------------------------------- #
-# editing config.ini as text
-# --------------------------------------------------------------------------- #
-def _read(config_file: str) -> list[str]:
-    try:
-        return Path(config_file).read_text(encoding="utf-8").splitlines()
-    except FileNotFoundError:
-        return []
-
-
-def _write(config_file: str, lines: list[str]) -> None:
-    Path(config_file).write_text("\n".join(lines).rstrip("\n") + "\n", encoding="utf-8")
-
-
-def _section_span(lines: list[str], section: str) -> tuple[int, int] | None:
-    """(header index, index after the section's last line), or None if it isn't there."""
-
-    header = re.compile(r"^\s*\[(.*?)\]\s*$")
-    start = None
-    for number, line in enumerate(lines):
-        found = header.match(line)
-        if found and start is not None:
-            return start, number
-        if found and found.group(1).strip().lower() == section.lower():
-            start = number
-    return (start, len(lines)) if start is not None else None
-
-
-def _set_option(lines: list[str], section: str, key: str, value: str) -> list[str]:
-    """Set `key = value` in a section, replacing the line or adding it; comments are kept."""
-
-    span = _section_span(lines, section)
-    if span is None:
-        return [*lines, *([""] if lines else []), f"[{section}]", f"{key} = {value}"]
-    start, end = span
-    pattern = re.compile(rf"^\s*{re.escape(key)}\s*[=:]", re.IGNORECASE)
-    for number in range(start + 1, end):
-        if pattern.match(lines[number]):
-            lines[number] = f"{key} = {value}"
-            return lines
-    insert_at = end
-    while insert_at > start + 1 and not lines[insert_at - 1].strip():
-        insert_at -= 1  # keep the blank line that separates sections
-    lines.insert(insert_at, f"{key} = {value}")
-    return lines
-
-
-def _drop_section(lines: list[str], section: str) -> list[str]:
-    span = _section_span(lines, section)
-    if span is None:
-        return lines
-    start, end = span
-    trimmed = lines[:start] + lines[end:]
-    while start > 0 and start <= len(trimmed) and not trimmed[start - 1].strip() and (
-        start == len(trimmed) or not trimmed[start].strip()
-    ):
-        del trimmed[start - 1]  # don't leave a gap of blank lines
-        start -= 1
-    return trimmed
 
 
 # --------------------------------------------------------------------------- #
@@ -136,8 +76,8 @@ def add(name: str, path: str, config_file: str = ns.CONFIG_FILE) -> ns.Destinati
     if not status.available:
         raise LocationError(f"{status.message or 'That folder cannot be used right now.'} Nothing was saved.")
 
-    lines = _set_option(_read(config_file), f"{SECTION_PREFIX} {name}", "path", path)
-    _write(config_file, lines)
+    lines = set_option(read_lines(config_file), f"{SECTION_PREFIX} {name}", "path", path)
+    write_lines(config_file, lines)
     return ns.Destination(name, path, kind="location")
 
 
@@ -148,16 +88,16 @@ def remove(name: str, config_file: str = ns.CONFIG_FILE) -> None:
     if found is None:
         raise LocationError(f"There is no location called '{name}'.")
 
-    lines = _read(config_file)
+    lines = read_lines(config_file)
     if found.kind == "location":
-        lines = _drop_section(lines, f"{SECTION_PREFIX} {name}")
+        lines = drop_section(lines, f"{SECTION_PREFIX} {name}")
     elif found.kind == "share":
         if os.environ.get(ns.SHARE_ENV):
             raise LocationError(f"This one comes from the {ns.SHARE_ENV} environment variable; unset it first.")
-        lines = _set_option(lines, "Network", "share", "")
+        lines = set_option(lines, "Network", "share", "")
     else:  # onedrive: blank (not missing) so it isn't detected again
-        lines = _set_option(lines, "Network", "onedrive", "")
-    _write(config_file, lines)
+        lines = set_option(lines, "Network", "onedrive", "")
+    write_lines(config_file, lines)
 
 
 def suggestions(config_file: str = ns.CONFIG_FILE) -> list[dict]:
