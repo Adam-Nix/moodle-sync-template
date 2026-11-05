@@ -1,0 +1,5 @@
+requests
+
+# Only for "Pull from webpage" - printing course-site slides to PDF.
+# The browser itself is a separate download: python -m playwright install chromium
+playwright

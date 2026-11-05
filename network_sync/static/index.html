@@ -1,0 +1,1412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4th Year Sync</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='2' y='2' width='60' height='60' rx='15' fill='%230B57D0'/><g fill='none' stroke='%23FFFFFF' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'><path d='M15 29a17 17 0 0 1 29.5-10.5M46 10.5v9h-9M49 35a17 17 0 0 1-29.5 10.5M18 53.5v-9h9'/></g><rect x='26.5' y='24.5' width='11' height='15' rx='2' fill='%23D3E3FD'/></svg>">
+<!-- Google's Material 3 components, Roboto and Material Symbols. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block" rel="stylesheet">
+<script type="module" src="https://esm.run/@material/web@2.2.0/all.js"></script>
+<style>
+  /* Material 3 colour roles (the Google Workspace blue scheme). The md-* components read these. */
+  :root {
+    --md-sys-color-primary: #0b57d0;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #d3e3fd;
+    --md-sys-color-on-primary-container: #041e49;
+    --md-sys-color-secondary: #00639b;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #c2e7ff;
+    --md-sys-color-on-secondary-container: #001d35;
+    --md-sys-color-tertiary: #146c2e;
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: #c4eed0;
+    --md-sys-color-on-tertiary-container: #072711;
+    --md-sys-color-error: #b3261e;
+    --md-sys-color-on-error: #ffffff;
+    --md-sys-color-error-container: #f9dedc;
+    --md-sys-color-on-error-container: #410e0b;
+    --md-sys-color-background: #f0f4f9;
+    --md-sys-color-surface: #ffffff;
+    --md-sys-color-on-surface: #1f1f1f;
+    --md-sys-color-on-surface-variant: #444746;
+    --md-sys-color-surface-container-lowest: #ffffff;
+    --md-sys-color-surface-container-low: #f8fafd;
+    --md-sys-color-surface-container: #f0f4f9;
+    --md-sys-color-surface-container-high: #e9eef6;
+    --md-sys-color-surface-container-highest: #dde3ea;
+    --md-sys-color-outline: #747775;
+    --md-sys-color-outline-variant: #c4c7c5;
+    --md-sys-color-inverse-surface: #303030;
+    --md-sys-color-inverse-on-surface: #f2f2f2;
+    --md-sys-color-inverse-primary: #a8c7fa;
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-shadow: #000000;
+    --md-ref-typeface-brand: "Roboto", system-ui, sans-serif;
+    --md-ref-typeface-plain: "Roboto", system-ui, sans-serif;
+    --mono: "Roboto Mono", ui-monospace, Consolas, monospace;
+    --file-red: #d93025;
+    --file-yellow: #e37400;
+    --file-blue: #1a73e8;
+    --file-green: #188038;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --md-sys-color-primary: #a8c7fa;
+      --md-sys-color-on-primary: #062e6f;
+      --md-sys-color-primary-container: #0842a0;
+      --md-sys-color-on-primary-container: #d3e3fd;
+      --md-sys-color-secondary: #7fcfff;
+      --md-sys-color-on-secondary: #003355;
+      --md-sys-color-secondary-container: #004a77;
+      --md-sys-color-on-secondary-container: #c2e7ff;
+      --md-sys-color-tertiary: #6dd58c;
+      --md-sys-color-on-tertiary: #0a3818;
+      --md-sys-color-tertiary-container: #0f5223;
+      --md-sys-color-on-tertiary-container: #c4eed0;
+      --md-sys-color-error: #f2b8b5;
+      --md-sys-color-on-error: #601410;
+      --md-sys-color-error-container: #8c1d18;
+      --md-sys-color-on-error-container: #f9dedc;
+      --md-sys-color-background: #131314;
+      --md-sys-color-surface: #1e1f20;
+      --md-sys-color-on-surface: #e3e3e3;
+      --md-sys-color-on-surface-variant: #c4c7c5;
+      --md-sys-color-surface-container-lowest: #0e0e0e;
+      --md-sys-color-surface-container-low: #1b1b1b;
+      --md-sys-color-surface-container: #1e1f20;
+      --md-sys-color-surface-container-high: #282a2c;
+      --md-sys-color-surface-container-highest: #333537;
+      --md-sys-color-outline: #8e918f;
+      --md-sys-color-outline-variant: #444746;
+      --md-sys-color-inverse-surface: #e3e3e3;
+      --md-sys-color-inverse-on-surface: #303030;
+      --md-sys-color-inverse-primary: #0b57d0;
+      --file-red: #f28b82;
+      --file-yellow: #fdd663;
+      --file-blue: #8ab4f8;
+      --file-green: #81c995;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--md-sys-color-background); color: var(--md-sys-color-on-surface);
+    font: 400 14px/20px var(--md-ref-typeface-plain); -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .muted { color: var(--md-sys-color-on-surface-variant); }
+  .spacer { flex: 1; }
+  .empty { padding: 24px 16px; color: var(--md-sys-color-on-surface-variant); }
+  md-icon { flex: none; }
+  md-circular-progress.small { --md-circular-progress-size: 20px; }
+  md-list { --md-list-container-color: transparent; padding: 0; }
+
+  /* ---------- top app bar ---------- */
+  .app-bar {
+    /* z-index 1 keeps it above the page but under md-dialog's scrim, which comes later in the page */
+    position: sticky; top: 0; z-index: 1; background: var(--md-sys-color-background);
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
+    max-width: 1240px; margin: 0 auto; padding: 10px 24px;
+  }
+  .brand {
+    width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+  }
+  .app-bar h1 { margin: 0; font: 400 22px/28px var(--md-ref-typeface-brand); white-space: nowrap; }
+  /* md-dialog's scrim is not in the top layer, so let it cover the bar while a dialog is open */
+  body:has(md-dialog[open]) .app-bar { z-index: auto; position: static; }
+  .app-sub { flex: 1; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+  .copies { display: flex; flex-wrap: wrap; gap: 8px; }
+  .copy.ok { --md-assist-chip-leading-icon-color: var(--md-sys-color-tertiary); }
+  .copy.problem {
+    --md-assist-chip-label-text-color: var(--md-sys-color-error);
+    --md-assist-chip-leading-icon-color: var(--md-sys-color-error);
+    --md-assist-chip-outline-color: var(--md-sys-color-error);
+  }
+
+  /* ---------- page ---------- */
+  .page { max-width: 1240px; margin: 0 auto; padding: 4px 24px 48px; display: flex; flex-direction: column; gap: 16px; }
+  .surface { background: var(--md-sys-color-surface); border-radius: 16px; padding: 20px 24px; min-width: 0; }
+  .section-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; min-height: 40px; margin-bottom: 4px; }
+  .section-head h2 { margin: 0; font: 500 16px/24px var(--md-ref-typeface-brand); }
+  .section-head .meta { color: var(--md-sys-color-on-surface-variant); font-size: 13px; }
+  .section-head .meta.bad { color: var(--md-sys-color-error); font-weight: 500; }
+
+  /* ---------- banners: urgent work and broken copies ---------- */
+  .banners { display: flex; flex-direction: column; gap: 12px; }
+  .banners:empty { display: none; }
+  .banner {
+    display: flex; align-items: flex-start; gap: 16px; padding: 16px 20px; border-radius: 16px;
+    background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container);
+  }
+  .banner > md-icon { margin-top: 2px; }
+  .banner-body { flex: 1; min-width: 0; }
+  .banner .title { font: 500 16px/24px var(--md-ref-typeface-brand); }
+  .banner .line + .line { margin-top: 4px; }
+  .banner .path { font: 12px/18px var(--mono); opacity: .85; overflow-wrap: anywhere; }
+  .banner .small { font-size: 13px; opacity: .9; }
+  .banner .no { font-weight: 500; text-decoration: underline; }
+  .banner md-text-button { --md-text-button-label-text-color: var(--md-sys-color-on-error-container); margin: 4px 0 -8px -12px; }
+
+  /* ---------- status card ---------- */
+  .status-row { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 24px; }
+  .headline { flex: 1 1 320px; min-width: 0; }
+  .headline h2 { margin: 0; font: 400 24px/32px var(--md-ref-typeface-brand); }
+  .headline p { margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant); }
+  .status-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  #updateSpin { --md-circular-progress-active-indicator-color: currentColor; }
+
+  .more { margin-top: 16px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+  .task { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant); }
+  .task:last-child { border-bottom: 0; padding-bottom: 0; }
+  .task > md-icon { color: var(--md-sys-color-on-surface-variant); }
+  .task .text { flex: 1; min-width: 0; }
+  .task .text b { display: block; font-weight: 500; }
+  .task .text span { display: block; color: var(--md-sys-color-on-surface-variant); font-size: 13px; line-height: 18px; }
+  .task .btns { display: flex; gap: 8px; flex: none; }
+
+  .progress { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+  .progress-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .progress-title { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #progCount { flex: none; color: var(--md-sys-color-on-surface-variant); font-variant-numeric: tabular-nums; }
+  md-linear-progress { width: 100%; }
+  .prog-file { margin-top: 8px; font: 12px/16px var(--mono); color: var(--md-sys-color-on-surface-variant);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* files moved by the current or last job - inline, so it never covers anything */
+  .run { margin-top: 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden; }
+  .run-head { display: flex; align-items: center; gap: 8px; padding: 4px 4px 4px 16px; background: var(--md-sys-color-surface-container-low); }
+  .run-head b { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .run-head .meta { color: var(--md-sys-color-on-surface-variant); font-size: 12px; white-space: nowrap; }
+  .run-list { max-height: 240px; overflow: auto; }
+  .run-row {
+    display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+    padding: 6px 16px; border-top: 1px solid var(--md-sys-color-outline-variant);
+  }
+  .run-row md-icon { --md-icon-size: 18px; color: var(--md-sys-color-primary); }
+  .run-row b, .run-row small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .run-row b { font-weight: 400; }
+  .run-row small { color: var(--md-sys-color-on-surface-variant); font-size: 12px; }
+  .run-row .bytes { color: var(--md-sys-color-on-surface-variant); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- conflicts ---------- */
+  .conflicts .section-head h2 { color: var(--md-sys-color-error); }
+  .conflicts .intro { margin: 0 0 4px; color: var(--md-sys-color-on-surface-variant); font-size: 13px; }
+
+  /* ---------- deadlines ---------- */
+  .group-title { padding: 12px 16px 4px; font: 500 14px/20px var(--md-ref-typeface-brand); color: var(--md-sys-color-primary); }
+  .dl-group.attention .group-title { color: var(--md-sys-color-error); }
+  .group-note { padding: 0 16px 4px; color: var(--md-sys-color-on-surface-variant); font-size: 12px; }
+  details.dl-group summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 4px; border-radius: 8px; }
+  details.dl-group summary::-webkit-details-marker { display: none; }
+  details.dl-group summary .group-title { color: var(--md-sys-color-on-surface-variant); }
+  details.dl-group summary md-icon { margin-top: 8px; color: var(--md-sys-color-on-surface-variant); transition: transform .2s; }
+  details.dl-group[open] summary md-icon { transform: rotate(180deg); }
+  md-list-item.dl { border-radius: 12px; }
+  .date-badge {
+    width: 48px; height: 48px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface-variant); line-height: 1;
+  }
+  .date-badge b { font: 500 18px/1 var(--md-ref-typeface-brand); color: var(--md-sys-color-on-surface); }
+  .date-badge span { margin-top: 3px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+  .dl.soon .date-badge, .dl.late .date-badge { background: var(--md-sys-color-error-container); }
+  .dl.soon .date-badge, .dl.late .date-badge, .dl.soon .date-badge b, .dl.late .date-badge b { color: var(--md-sys-color-on-error-container); }
+  .dl.done .date-badge { background: var(--md-sys-color-tertiary-container); }
+  .dl.done .date-badge, .dl.done .date-badge b { color: var(--md-sys-color-on-tertiary-container); }
+  .dl .when { white-space: nowrap; }
+  .dl.soon .when, .dl.late .when { color: var(--md-sys-color-error); font-weight: 500; }
+  .dl.done .when { color: var(--md-sys-color-tertiary); }
+  .dl .note { display: block; color: var(--md-sys-color-error); }
+
+  /* ---------- files + activity ---------- */
+  .columns { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+  md-outlined-text-field.search {
+    width: 260px; --md-outlined-text-field-top-space: 8px; --md-outlined-text-field-bottom-space: 8px;
+    --md-outlined-text-field-container-shape: 28px;
+  }
+  md-chip-set { margin: 4px 0 8px; }
+  md-filter-chip.attention { --md-filter-chip-label-text-color: var(--md-sys-color-primary); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 8px; font-size: 12px; color: var(--md-sys-color-on-surface-variant); }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .legend md-icon { --md-icon-size: 16px; }
+
+  table.files { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .files th {
+    text-align: left; padding: 8px 12px; font: 500 12px/16px var(--md-ref-typeface-plain); letter-spacing: .4px;
+    color: var(--md-sys-color-on-surface-variant); border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  }
+  .files td { height: 40px; padding: 0 12px; border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .files .c-size { width: 84px; text-align: right; }
+  .files .c-date { width: 124px; }
+  .files .c-state { width: 164px; }
+  .files td.c-size, .files td.c-date { color: var(--md-sys-color-on-surface-variant); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .files tr.file:hover td { background: var(--md-sys-color-surface-container-low); }
+  .files tr.course td { height: 48px; cursor: pointer; }
+  .files tr.course:hover td { background: var(--md-sys-color-surface-container-low); }
+  .course-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .course-cell .caret { color: var(--md-sys-color-on-surface-variant); transition: transform .2s; }
+  .open .course-cell .caret { transform: rotate(90deg); }
+  .course-name { font-weight: 500; white-space: nowrap; }
+  .course-meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--md-sys-color-on-surface-variant); font-size: 12px; }
+  .badge {
+    flex: none; padding: 2px 8px; border-radius: 8px; font: 500 12px/16px var(--md-ref-typeface-plain);
+    background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  }
+  .name-cell { display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 32px; }
+  .name-cell md-icon { --md-icon-size: 20px; }
+  .fname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dupe-of { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--md-sys-color-on-surface-variant); font-size: 12px; }
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
+  .st md-icon { --md-icon-size: 18px; }
+  .st.attention { color: var(--md-sys-color-primary); font-weight: 500; }
+  .st.fine md-icon { color: var(--md-sys-color-tertiary); }
+
+  .log { max-height: 520px; overflow: auto; font-size: 12px; line-height: 17px; }
+  .log-line { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 8px; padding: 4px 0; }
+  .log-line time { font: 11px/17px var(--mono); color: var(--md-sys-color-on-surface-variant); }
+  .log-line span { overflow-wrap: anywhere; color: var(--md-sys-color-on-surface-variant); }
+  .log-line.ok span { color: var(--md-sys-color-tertiary); }
+  .log-line.warn span { color: var(--md-sys-color-on-surface); }
+  .log-line.error span { color: var(--md-sys-color-error); }
+
+  /* ---------- result message, inside the status card ---------- */
+  .message {
+    display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 4px 4px 4px 16px; border-radius: 12px;
+    background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);
+  }
+  .message.bad { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+  .message .msg { flex: 1; min-width: 0; padding: 10px 0; overflow-wrap: anywhere; }
+  .message b { font-weight: 500; }
+  .message md-icon-button { --md-icon-button-icon-color: currentColor; }
+
+  /* ---------- dialogs ---------- */
+  md-dialog { max-width: min(560px, calc(100vw - 32px)); }
+  md-dialog.wide { max-width: min(800px, calc(100vw - 32px)); }
+  md-dialog p { margin: 0 0 8px; }
+  md-dialog code { font: 12px/18px var(--mono); white-space: pre-line; overflow-wrap: anywhere; }
+  .dialog-warn { margin: 8px 0; padding: 10px 12px; border-radius: 8px; background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); font-size: 13px; }
+  .cf-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .cf-side { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); border-top: 4px solid var(--s); }
+  .cf-side h4 { margin: 0; display: flex; align-items: baseline; gap: 8px; font: 500 14px/20px var(--md-ref-typeface-brand); }
+  .cf-side h4 small { color: var(--md-sys-color-primary); font-weight: 500; }
+  .cf-side .facts { color: var(--md-sys-color-on-surface-variant); font-size: 13px; }
+  .cf-side .row { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+  .notice { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--md-sys-color-surface-container-high); font-size: 13px; }
+  .notice.bad { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+  .notice.ok { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+  .diff-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 12px; color: var(--md-sys-color-on-surface-variant); }
+  .diff-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .diff { max-height: 300px; overflow: auto; margin-top: 6px; padding: 4px 0; border-radius: 8px;
+    border: 1px solid var(--md-sys-color-outline-variant); font: 12px/1.55 var(--mono); }
+  .diff div { padding: 0 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .diff .a { background: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent); }
+  .diff .b { background: color-mix(in srgb, var(--md-sys-color-tertiary) 16%, transparent); }
+  .diff .h { color: var(--md-sys-color-on-surface-variant); margin-top: 4px; }
+
+  /* ---------- smaller screens ---------- */
+  @media (max-width: 1000px) {
+    .columns { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .app-bar { padding: 8px 16px; }
+    /* title and refresh on one row, the folder and the copies underneath */
+    #checkBtn { order: 1; margin-left: auto; }
+    .app-sub { order: 2; flex-basis: 100%; }
+    .app-sub .spacer { display: none; }
+    .app-sub md-text-button { margin-left: -12px; }
+    .page { padding: 4px 12px 32px; gap: 12px; }
+    .surface { padding: 16px; }
+    .banner { padding: 14px 16px; gap: 12px; }
+    .headline h2 { font-size: 22px; line-height: 28px; }
+    .status-actions { width: 100%; }
+    .status-actions md-filled-button { flex: 1; }
+    .task { flex-wrap: wrap; gap: 8px 16px; }
+    .task .btns { width: 100%; justify-content: flex-end; }
+    md-outlined-text-field.search { width: 100%; }
+    .run-head .meta { display: none; }
+    /* collapsed rather than hidden, so the course rows' colspan still lines up */
+    .files th.c-date, .files td.c-date { width: 0; padding: 0; font-size: 0; }
+    .files .c-size { width: 64px; padding: 0 4px; }
+    .files .c-state { width: 40px; padding: 0 8px; }
+    .files .st-text, .files th.c-state span, .dupe-of { display: none; }
+    .name-cell { padding-left: 0; gap: 8px; }
+    .files td { padding: 0 8px; }
+    .cf-sides { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="app-bar">
+  <div class="brand"><md-icon>cloud_sync</md-icon></div>
+  <h1>4th Year Sync</h1>
+  <div class="app-sub">
+    <md-text-button data-open="local" title="Open the 4th year folder on this laptop">
+      <md-icon slot="icon">folder_open</md-icon><span id="master">This laptop</span>
+    </md-text-button>
+    <div class="spacer"></div>
+    <md-chip-set class="copies" id="pills"></md-chip-set>
+  </div>
+  <md-icon-button id="checkBtn" title="Check the connections again and rescan your files (also happens every 20 seconds)" aria-label="Re-check">
+    <md-icon>refresh</md-icon>
+  </md-icon-button>
+</header>
+
+<main class="page">
+  <!-- work due within a few days, then any copy that is offline or paused -->
+  <div class="banners" id="urgent"></div>
+  <div class="banners" id="alerts"></div>
+
+  <section class="surface">
+    <div class="status-row">
+      <div class="headline">
+        <h2 id="headline">Checking…</h2>
+        <p id="headlineSub"></p>
+      </div>
+      <div class="status-actions">
+        <md-text-button id="moreBtn" aria-expanded="false" aria-controls="more">
+          <md-icon slot="icon" id="moreIcon">expand_more</md-icon><span id="moreLabel">More options</span>
+        </md-text-button>
+        <md-filled-button id="updateBtn" disabled title="Download from Moodle and the course website, then send anything new to your copies">
+          <md-icon slot="icon" id="updateIcon">sync</md-icon>
+          <md-circular-progress slot="icon" class="small" id="updateSpin" indeterminate hidden></md-circular-progress>
+          <span id="updateLabel">Get new files</span>
+        </md-filled-button>
+      </div>
+    </div>
+
+    <!-- result of the last thing you did; inline so it never covers the page -->
+    <div class="message" id="snackbar" role="status" hidden>
+      <md-icon id="snackIcon">check_circle</md-icon>
+      <div class="msg"><b id="snackTitle"></b> <span id="snackText"></span></div>
+      <md-icon-button id="snackClose" aria-label="Dismiss"><md-icon>close</md-icon></md-icon-button>
+    </div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-top">
+        <span class="progress-title" id="progTitle">Working…</span>
+        <span id="progCount"></span>
+      </div>
+      <md-linear-progress id="progBar" indeterminate></md-linear-progress>
+      <div class="prog-file" id="progFile"></div>
+    </div>
+
+    <div class="run" id="runPop" hidden>
+      <div class="run-head">
+        <md-circular-progress class="small" id="runSpin" indeterminate hidden></md-circular-progress>
+        <b id="runTitle">Files moved</b>
+        <span class="meta" id="runCounts"></span>
+        <md-icon-button id="runClose" aria-label="Hide this list"><md-icon>close</md-icon></md-icon-button>
+      </div>
+      <div class="run-list" id="runList"></div>
+    </div>
+
+    <div class="more" id="more" hidden>
+      <div class="task">
+        <md-icon>download</md-icon>
+        <div class="text"><b>Download from Moodle</b><span>Saves new course files to this laptop only.</span></div>
+        <div class="btns">
+          <md-outlined-button id="downloadBtn">
+            <md-circular-progress slot="icon" class="small" id="dlSpin" indeterminate hidden></md-circular-progress><span id="dlBtnLabel">Download</span>
+          </md-outlined-button>
+        </div>
+      </div>
+      <div class="task">
+        <md-icon>slideshow</md-icon>
+        <div class="text"><b>Print course-website slides</b><span id="webPullDesc"></span></div>
+        <div class="btns">
+          <md-outlined-button id="webPullBtn">
+            <md-circular-progress slot="icon" class="small" id="wpSpin" indeterminate hidden></md-circular-progress><span id="wpBtnLabel">Print slides</span>
+          </md-outlined-button>
+        </div>
+      </div>
+      <div class="task">
+        <md-icon>cloud_upload</md-icon>
+        <div class="text"><b>Send to your copies</b><span id="syncDesc"></span></div>
+        <div class="btns">
+          <md-text-button id="previewBtn" disabled title="List what would be sent in the activity log, without sending anything">Preview</md-text-button>
+          <md-outlined-button id="syncBtn" disabled><span id="syncLabel">Send</span></md-outlined-button>
+        </div>
+      </div>
+      <div class="task">
+        <md-icon>sync_alt</md-icon>
+        <div class="text"><b>Make every copy match</b><span>Two-way repair of the whole 4th year folder. Files missing here are copied back and everything else is sent out.
+          Nothing is deleted, but files you removed on purpose come back if a copy still has them. You see the list first.</span></div>
+        <div class="btns"><md-outlined-button id="identicalBtn">Review</md-outlined-button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- files edited in two places; only shown when there are some -->
+  <section class="surface conflicts" id="conflicts" hidden>
+    <div class="section-head">
+      <h2>Edited in two places</h2>
+      <span class="meta" id="cfCount"></span>
+      <div class="spacer"></div>
+      <md-text-button id="cfBin" title="Versions you chose not to keep are moved here on this laptop">
+        <md-icon slot="icon">delete</md-icon>Discarded versions
+      </md-text-button>
+    </div>
+    <p class="intro">Changed on two copies before they synced. Open one to pick the version to keep.</p>
+    <md-list id="cfList"></md-list>
+  </section>
+
+  <section class="surface">
+    <div class="section-head">
+      <h2>Deadlines</h2>
+      <span class="meta" id="dlSummary"></span>
+      <div class="spacer"></div>
+      <span class="meta" id="dlMeta"></span>
+      <md-icon-button id="dlRefresh" title="Ask Moodle again (also happens every 15 minutes)" aria-label="Refresh deadlines"><md-icon>refresh</md-icon></md-icon-button>
+    </div>
+    <div id="dlList"><div class="empty">Loading deadlines from Moodle…</div></div>
+  </section>
+
+  <div class="columns">
+    <section class="surface">
+      <div class="section-head">
+        <h2>Course files</h2>
+        <div class="spacer"></div>
+        <md-text-button data-open="duplicate-bin" title="Duplicates are never kept in the master folder. The extra copies are moved here on this laptop.">
+          <md-icon slot="icon">folder_delete</md-icon>Removed duplicates
+        </md-text-button>
+        <md-outlined-text-field class="search" id="search" type="search" placeholder="Search files or courses" aria-label="Search files or courses">
+          <md-icon slot="leading-icon">search</md-icon>
+        </md-outlined-text-field>
+      </div>
+      <md-chip-set id="tabs"></md-chip-set>
+      <div class="legend">
+        <span><md-icon>cloud_upload</md-icon>Not sent yet: only on this laptop</span>
+        <span><md-icon>sync</md-icon>Updated here: newer than your copies</span>
+        <span><md-icon>content_copy</md-icon>Duplicate: on a copy, already here under another name</span>
+        <span><md-icon>cloud</md-icon>Not on this laptop: only on a copy</span>
+      </div>
+      <div id="courses"><div class="empty">Loading files…</div></div>
+    </section>
+
+    <aside class="surface">
+      <div class="section-head"><h2>Activity</h2></div>
+      <div class="log" id="log"></div>
+    </aside>
+  </div>
+</main>
+
+<md-dialog id="confirm">
+  <div slot="headline">Send files to your copies?</div>
+  <div slot="content">
+    <p id="confirmText"></p>
+    <code id="confirmPath"></code>
+  </div>
+  <div slot="actions">
+    <md-text-button id="confirmCancel">Cancel</md-text-button>
+    <md-filled-button id="confirmOk">Send</md-filled-button>
+  </div>
+</md-dialog>
+
+<md-dialog id="identicalDlg">
+  <div slot="headline">Make every copy match?</div>
+  <div slot="content">
+    <p id="idSummary"></p>
+    <div class="dialog-warn" id="idWarn" hidden></div>
+    <div id="idLists"></div>
+    <p class="muted" style="margin-top:12px;font-size:13px">Nothing is deleted. A file missing in one place is copied there from the others, and where a file differs, the most recent edit is copied everywhere. Files you removed on purpose, like duplicates, come back if a copy still has them.</p>
+  </div>
+  <div slot="actions">
+    <md-text-button id="idCancel">Cancel</md-text-button>
+    <md-filled-button id="idOk">Make them match</md-filled-button>
+  </div>
+</md-dialog>
+
+<md-dialog id="conflictDlg" class="wide">
+  <div slot="headline" id="cfTitle">Conflict</div>
+  <div slot="content">
+    <p class="muted" id="cfSub"></p>
+    <div class="cf-sides" id="cfSides"></div>
+    <div id="cfCompare"></div>
+    <p class="muted" style="margin-top:12px;font-size:13px">The version you keep replaces the other one on this laptop and on every copy that can be reached. The other version goes to the discarded versions folder on this laptop, so you can still get it back.</p>
+  </div>
+  <div slot="actions">
+    <md-text-button id="cfClose">Decide later</md-text-button>
+  </div>
+</md-dialog>
+
+<script>
+// Status of each file: a Material Symbol and a short label. "attention" ones are coloured.
+const STATES = {
+  "new":         { label: "Not sent yet",       icon: "cloud_upload", tone: "attention" },
+  "changed":     { label: "Updated here",       icon: "sync",         tone: "attention" },
+  "synced":      { label: "Backed up",          icon: "cloud_done",   tone: "fine" },
+  "duplicate":   { label: "Duplicate",          icon: "content_copy", tone: "quiet" },
+  "remote-only": { label: "Not on this laptop", icon: "cloud",        tone: "quiet" },
+};
+const FILTERS = [
+  { key: "all",       label: "All",                match: () => true },
+  { key: "pending",   label: "Waiting to send",    match: f => f.state === "new" || f.state === "changed", attention: true },
+  { key: "synced",    label: "Backed up",          match: f => f.state === "synced" },
+  { key: "duplicate", label: "Duplicates",         match: f => f.state === "duplicate" },
+  { key: "remote",    label: "Not on this laptop", match: f => f.state === "remote-only" },
+];
+// File type icons, coloured the way Google Drive does it.
+const FILE_KINDS = [
+  [["pdf"], "picture_as_pdf", "var(--file-red)"],
+  [["ppt", "pptx", "key", "odp"], "slideshow", "var(--file-yellow)"],
+  [["doc", "docx", "dotx", "odt", "rtf"], "description", "var(--file-blue)"],
+  [["xls", "xlsx", "csv", "ods"], "table_chart", "var(--file-green)"],
+  [["mp4", "mov", "mkv", "webm"], "movie", "var(--file-red)"],
+  [["png", "jpg", "jpeg", "gif", "svg", "webp"], "image", "var(--file-red)"],
+  [["zip", "7z", "rar", "gz", "tar"], "folder_zip", "var(--md-sys-color-on-surface-variant)"],
+  [["yaml", "yml", "json", "py", "sh", "ps1", "html", "js", "xml", "cfg", "ini"], "code", "var(--md-sys-color-on-surface-variant)"],
+  [["md", "txt", "log"], "article", "var(--md-sys-color-on-surface-variant)"],
+];
+const fileKind = ext => {
+  const hit = FILE_KINDS.find(([exts]) => exts.includes(ext));
+  return hit ? { icon: hit[1], color: hit[2] } : { icon: "draft", color: "var(--md-sys-color-on-surface-variant)" };
+};
+
+let state = null;
+let filter = "all";
+let openCourses = new Set();
+let firstRender = true;
+let jobWasRunning = false;
+let jobTimer = null;
+let runPopClosed = false;  // the X hides the moved-files list until the next run starts
+let chainRunning = false;  // "Get new files" runs several jobs in a row
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+const names = list => list.map(d => d.name).join(" and ");
+
+function size(bytes) {
+  const units = ["B", "KB", "MB", "GB"];
+  let i = 0, n = bytes;
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+  return (i === 0 ? n : n.toFixed(n < 10 ? 1 : 0)) + " " + units[i];
+}
+function ago(iso) {
+  if (!iso) return "";
+  const s = Math.max(0, Math.round((Date.now() - new Date(iso)) / 1000));
+  if (s < 5) return "just now";
+  if (s < 60) return s + "s ago";
+  if (s < 3600) return Math.floor(s / 60) + "m ago";
+  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+function when(iso) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString([], { day: "numeric", month: "short" }) + ", " +
+         new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+// "applied-cryptography-cryp-08004-26-27-id-22098" -> Applied Cryptography, CRYP 08004 · 2026/27
+function course(slug) {
+  const m = slug.match(/^(.*?)-([a-z]{4})-(\d{5})-(\d{2})-(\d{2})-id-\d+$/);
+  if (!m) return { title: slug, sub: "" };
+  const small = new Set(["and", "of", "to", "the", "in", "for"]);
+  const title = m[1].split("-").map((w, i) =>
+    w === "it" ? "IT" : (i && small.has(w)) ? w : w[0].toUpperCase() + w.slice(1)).join(" ");
+  return { title, sub: `${m[2].toUpperCase()} ${m[3]} · 20${m[4]}/${m[5]}` };
+}
+
+async function api(path, body) {
+  const opts = body === undefined ? {} : {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Sync-Dashboard": "1" },
+    body: JSON.stringify(body),
+  };
+  const res = await fetch(path, opts);
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
+
+// The result of the last action, shown in the status card until dismissed or replaced.
+function toast(title, text) {
+  const bad = /can't|couldn't|problem|nowhere|nothing reachable|stopped/i.test(title);
+  $("snackbar").classList.toggle("bad", bad);
+  $("snackIcon").textContent = bad ? "error" : "check_circle";
+  $("snackTitle").textContent = title + (text ? "." : "");
+  $("snackText").textContent = text || "";
+  $("snackbar").hidden = false;
+}
+
+/* ---------------- copies ---------------- */
+function destState(dest) {
+  const st = dest.status;
+  if ((dest.guard || {}).suspect) return { tone: "problem", text: "paused", icon: "pause_circle" };
+  if (!st) return { tone: "", text: "checking…", icon: "cloud_sync" };
+  if (st.available) {
+    // the cloud-with-tick icon already says "connected"
+    return { tone: "ok", text: dest.isUnc && st.latencyMs != null ? `${Math.round(st.latencyMs)} ms` : "", icon: "cloud_done" };
+  }
+  return st.hostUp ? { tone: "problem", text: "folder not usable", icon: "folder_off" }
+                   : { tone: "problem", text: "offline", icon: "cloud_off" };
+}
+
+function destBanner(dest) {
+  const st = dest.status;
+  const guard = dest.guard || {};
+  const title = guard.suspect ? `${dest.name} is paused because files have gone missing`
+    : st.hostUp ? `${dest.name}: the folder can't be used` : `${dest.name} is offline`;
+  const check = (ok, yes, no) => ok ? yes : `<span class="no">${no}</span>`;
+  const latency = st.latencyMs != null ? ` (${Math.round(st.latencyMs)} ms)` : "";
+  const checks = [
+    dest.isUnc ? check(st.hostUp, `server reachable${latency}`, "server not reachable") : "",
+    check(st.shareMounted, "folder found", "folder not found"),
+    check(st.writable, "can write", "can't write"),
+  ].filter(Boolean).join(" · ");
+  return `<div class="banner">
+    <md-icon>${guard.suspect ? "pause_circle" : "cloud_off"}</md-icon>
+    <div class="banner-body">
+      <div class="title">${esc(title)}</div>
+      ${guard.suspect
+        ? `<div class="line">${esc(guard.message)} Nothing is sent to or restored from it until this is sorted.</div>`
+        : `<div class="line">${esc(st.message)}</div>`}
+      <div class="line small">${checks} · checked ${esc(ago(st.checkedAt))}</div>
+      <div class="line path">${esc(dest.path)}</div>
+      ${guard.suspect ? `<md-text-button data-accept="${esc(dest.name)}">${guard.present} files is correct</md-text-button>` : ""}
+    </div>
+  </div>`;
+}
+
+function renderStatus() {
+  const job = state.job || {};
+  const dests = state.destinations || [];
+  const ready = dests.filter(d => d.status && d.status.available);
+  $("master").textContent = state.yearRoot || "This laptop";
+
+  $("pills").innerHTML = dests.map(d => {
+    const s = destState(d);
+    const label = s.text ? `${d.name} · ${s.text}` : d.name;
+    const tip = s.tone === "ok" ? `Connected. Open ${d.path}` : `Open ${d.path}`;
+    return `<md-assist-chip class="copy ${s.tone}" data-open="${esc(d.name)}" label="${esc(label)}"
+        title="${esc(tip)}"><md-icon slot="icon">${s.icon}</md-icon></md-assist-chip>`;
+  }).join("");
+  $("alerts").innerHTML = dests.length
+    ? dests.filter(d => d.status && destState(d).tone === "problem").map(destBanner).join("")
+    : `<div class="banner"><md-icon>cloud_off</md-icon><div class="banner-body">
+         <div class="title">No copies to send files to</div>
+         <div class="line small">Add 'share' or 'onedrive' under [Network] in config.ini.</div></div></div>`;
+  bindOpenButtons();
+  document.querySelectorAll("[data-accept]").forEach(b => b.onclick = async () => {
+    const name = b.dataset.accept;
+    if (!confirm(`Only do this if you know ${name} really should have fewer files now.\n\nContinue?`)) return;
+    const { data } = await api("/api/accept-count", { name });
+    toast(data.ok ? "Baseline updated" : "Couldn't update", data.message || "");
+    load(true);
+  });
+
+  const count = s => state.files.filter(f => f.state === s).length;
+  const pending = state.files.filter(FILTERS[1].match).length;
+  const missing = count("remote-only");
+  const busy = !!job.running || chainRunning;
+  const offline = dests.filter(d => !ready.includes(d));
+
+  let head, sub;
+  if (!dests.length) {
+    head = "Files are only on this laptop";
+    sub = "";
+  } else if (!ready.length) {
+    head = "Your copies can't be reached";
+    sub = "Files are safe here and will be sent when a copy is back.";
+  } else if (pending) {
+    head = `${plural(pending, "file")} waiting to be sent`;
+    sub = `Not yet on ${names(ready)}.`;
+  } else {
+    head = "Everything is backed up";
+    sub = `${plural(count("synced"), "file")} on this laptop and ${names(ready)}.`;
+  }
+  if (ready.length && offline.length) sub += ` ${names(offline)} can't be reached.`;
+  if (missing) sub += ` ${plural(missing, "file")} only on a copy.`;
+  $("headline").textContent = head;
+  $("headlineSub").textContent = sub;
+
+  $("updateBtn").disabled = busy;
+  $("updateSpin").hidden = !chainRunning;
+  $("updateIcon").hidden = chainRunning;
+  $("updateLabel").textContent = chainRunning ? "Getting new files…" : "Get new files";
+
+  const downloading = job.running && job.kind === "download";
+  $("downloadBtn").disabled = busy;
+  $("dlSpin").hidden = !downloading;
+  $("dlBtnLabel").textContent = downloading ? "Downloading…" : "Download";
+
+  const sites = state.webpages || [];
+  const pulling = job.running && job.kind === "webpull";
+  $("webPullBtn").disabled = busy || !sites.length;
+  $("wpSpin").hidden = !pulling;
+  $("wpBtnLabel").textContent = pulling ? "Printing…" : "Print slides";
+  $("webPullDesc").textContent = sites.length
+    ? `Saves the ${sites.map(s => s.name.toUpperCase()).join(", ")} lecture slides as PDFs in the course folder.`
+    : "None set up. Add a [Webpage <name>] section to config.ini.";
+
+  const sending = job.running && job.kind === "sync";
+  $("syncBtn").disabled = $("previewBtn").disabled = !(ready.length && pending && !busy);
+  $("syncLabel").textContent = sending ? "Sending…" : pending ? `Send ${pending}` : "Send";
+  $("syncDesc").textContent = !ready.length ? "No copy can be reached right now."
+    : pending ? `Copies ${plural(pending, "new or updated file")} to ${names(ready)}.`
+    : "Nothing to send.";
+  $("identicalBtn").disabled = busy || !ready.length;
+}
+
+function renderProgress() {
+  const job = state.job || {};
+  $("progress").hidden = !job.running;
+  if (!job.running) return;
+  $("progTitle").textContent = job.kind === "download" ? "Downloading from Moodle…"
+    : job.kind === "webpull" ? "Printing slides from the course website…"
+    : job.kind === "identical" ? "Making every copy match…"
+    : job.kind === "resolve" ? "Sorting out a conflict…"
+    : job.dry_run ? "Checking what would be sent…" : "Sending files to your copies…";
+  $("progCount").textContent = job.total ? `${job.done} of ${job.total}` : `${plural(job.done, "file")} so far`;
+  $("progBar").indeterminate = !job.total;
+  $("progBar").value = job.total ? job.done / job.total : 0;
+  $("progFile").textContent = job.current || "";
+}
+
+function renderRun() {
+  const files = state.run || [];
+  const job = state.job || {};
+  const busy = !!job.running;
+
+  // Shows by itself while files move, and stays until it is closed.
+  if ((files.length || busy) && !runPopClosed) $("runPop").hidden = false;
+  if (!files.length && !busy) $("runPop").hidden = true;
+  if ($("runPop").hidden) return;
+
+  const down = files.filter(f => f.direction === "down");
+  const up = files.filter(f => f.direction === "up");
+  const total = files.reduce((sum, f) => sum + (f.size || 0), 0);
+  $("runSpin").hidden = !busy;
+  $("runTitle").textContent = busy ? "Files moving now" : "Files moved in the last run";
+  $("runCounts").textContent = files.length ? `${down.length} down · ${up.length} up · ${size(total)}` : "";
+
+  const box = $("runList");
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 30;
+  box.innerHTML = files.map(f => {
+    const isDown = f.direction === "down";
+    const folder = f.path.slice(0, -f.name.length).replace(/\/$/, "");
+    return `<div class="run-row" title="${esc(f.path)}">
+      <md-icon>${isDown ? "arrow_downward" : "arrow_upward"}</md-icon>
+      <span><b>${esc(f.name)}</b><small>${esc(isDown ? folder || "from Moodle" : "to " + (f.where || "server"))}</small></span>
+      <span class="bytes">${size(f.size || 0)}</span>
+    </div>`;
+  }).join("") || `<div class="empty" style="padding:12px 16px">Checking…</div>`;
+  if (atBottom) box.scrollTop = box.scrollHeight;
+}
+
+/* ---------------- files ---------------- */
+function renderTabs() {
+  // Empty groups are hidden, apart from "All" and whichever one is selected.
+  $("tabs").innerHTML = FILTERS.map(f => {
+    const n = state.files.filter(f.match).length;
+    if (!n && f.key !== "all" && f.key !== filter) return "";
+    return `<md-filter-chip data-filter="${f.key}" label="${esc(`${f.label} ${n}`)}" ${filter === f.key ? "selected" : ""}
+      class="${f.attention && n ? "attention" : ""}"></md-filter-chip>`;
+  }).join("");
+}
+
+function renderFiles() {
+  const f = FILTERS.find(x => x.key === filter);
+  const q = ($("search").value || "").trim().toLowerCase();
+
+  const groups = new Map();
+  for (const file of state.files) {
+    if (!groups.has(file.course)) groups.set(file.course, []);
+    groups.get(file.course).push(file);
+  }
+
+  if (firstRender) {
+    // Start with courses that have something to send expanded.
+    for (const [name, files] of groups) if (files.some(FILTERS[1].match)) openCourses.add(name);
+    firstRender = false;
+  }
+
+  const rows = [];
+  for (const [slug, all] of [...groups].sort((a, b) => a[0].localeCompare(b[0]))) {
+    const info = course(slug);
+    const shown = all.filter(x => f.match(x) &&
+      (!q || x.name.toLowerCase().includes(q) || info.title.toLowerCase().includes(q)));
+    if (!shown.length) continue;
+
+    const waiting = all.filter(FILTERS[1].match).length;
+    const open = q || openCourses.has(slug);
+    rows.push(`<tr class="course ${open ? "open" : ""}" data-course="${esc(slug)}"><td colspan="4">
+      <div class="course-cell">
+        <md-icon class="caret">chevron_right</md-icon>
+        <span class="course-name">${esc(info.title)}</span>
+        <span class="course-meta">${esc(info.sub)} · ${plural(all.length, "file")}</span>
+        ${waiting ? `<span class="badge">${waiting} to send</span>` : ""}
+      </div>
+    </td></tr>`);
+    if (open) rows.push(...shown.map(fileRow));
+  }
+  $("courses").innerHTML = rows.length
+    ? `<table class="files">
+        <thead><tr><th>Name</th><th class="c-size">Size</th><th class="c-date">Modified</th><th class="c-state"><span>Status</span></th></tr></thead>
+        <tbody>${rows.join("")}</tbody>
+      </table>`
+    : `<div class="empty">${state.files.length ? "No files match." : "No files in the master folder yet."}</div>`;
+}
+
+function fileRow(file) {
+  const ext = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
+  const kind = fileKind(ext);
+  const st = STATES[file.state] || STATES["new"];
+  // The master folder never keeps duplicates, so one listed here is only on a copy.
+  const dup = file.duplicateOf ? `<span class="dupe-of">on a copy, same as ${esc(file.duplicateOf.split("/").pop())}</span>` : "";
+  return `<tr class="file" title="${esc(file.path)}">
+    <td><div class="name-cell"><md-icon style="color:${kind.color}">${kind.icon}</md-icon><span class="fname">${esc(file.name)}</span>${dup}</div></td>
+    <td class="c-size">${size(file.size)}</td>
+    <td class="c-date">${when(file.modified)}</td>
+    <td class="c-state"><span class="st ${st.tone}" title="${esc(st.label)}"><md-icon>${st.icon}</md-icon><span class="st-text">${st.label}</span></span></td>
+  </tr>`;
+}
+
+function renderLog() {
+  const box = $("log");
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 30;
+  box.innerHTML = state.log.map(l =>
+    `<div class="log-line ${l.level}"><time>${esc(l.time)}</time><span>${esc(l.text)}</span></div>`).join("")
+    || `<div class="empty" style="padding:8px 0">Nothing yet.</div>`;
+  if (atBottom) box.scrollTop = box.scrollHeight;
+}
+
+/* ---------------- deadlines ---------------- */
+const DAY = 864e5;
+const DUE_SOON_DAYS = 3;     // this close to the deadline, unfinished work turns red and goes in the banner
+const FLEXIBLE_DAYS = 300;   // a due date this far out means "any time before the semester ends"
+let deadlines = null;
+let deadlinesTimer = null;
+
+function countdown(ms) {
+  const late = ms < 0, a = Math.abs(ms);
+  const n = a < 36e5 ? [Math.max(1, Math.round(a / 6e4)), "min"]
+          : a < DAY ? [Math.round(a / 36e5), "hour"]
+          : a < 14 * DAY ? [Math.round(a / DAY), "day"]
+          : [Math.round(a / (7 * DAY)), "week"];
+  const text = `${n[0]} ${n[1]}${n[0] === 1 ? "" : "s"}`;
+  return late ? `${text} late` : `in ${text}`;
+}
+
+const time = date => date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const dayMonth = date => date.toLocaleDateString([], { day: "numeric", month: "short" });
+const fullDate = date => date.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short", year: "numeric" }) +
+  ", " + time(date);
+
+const semesterEnd = () => deadlines && deadlines.semesterEnd ? new Date(deadlines.semesterEnd) : null;
+const isFlexible = (d, now) => d.due && new Date(d.due) - now > FLEXIBLE_DAYS * DAY;
+
+function flexibleNote(now) {
+  const end = semesterEnd();
+  if (!end) return "No fixed deadline. Set semester_end under [Deadlines] in config.ini for a countdown.";
+  return end < now
+    ? `The semester ended on ${dayMonth(end)}. Update semester_end in config.ini.`
+    : `Hand in before the semester ends on ${dayMonth(end)} (${countdown(end - now)}).`;
+}
+
+function dlGroups(items, now) {
+  const groups = [
+    { key: "overdue", title: "Overdue", attention: true, items: [] },
+    { key: "week", title: "Due this week", attention: true, items: [] },
+    { key: "next", title: "Next week", items: [] },
+    { key: "later", title: "Later", items: [] },
+    { key: "flexible", title: "By end of semester", items: [], note: flexibleNote(now) },
+    { key: "undated", title: "No due date", items: [] },
+    { key: "done", title: "Handed in", items: [] },
+  ];
+  const by = Object.fromEntries(groups.map(g => [g.key, g.items]));
+  for (const d of items) {
+    // Finished work goes in one collapsed group, so the list is only what's left to do.
+    if (d.status === "submitted") { by.done.push(d); continue; }
+    if (!d.due) { by.undated.push(d); continue; }
+    const left = new Date(d.due) - now;
+    if (left < 0) by.overdue.push(d);
+    else if (left < 7 * DAY) by.week.push(d);
+    else if (left < 14 * DAY) by.next.push(d);
+    else if (left > FLEXIBLE_DAYS * DAY) by.flexible.push(d);
+    else by.later.push(d);
+  }
+  by.done.sort((a, b) => String(b.submittedAt || "").localeCompare(String(a.submittedAt || "")));  // most recent first
+  return groups.filter(g => g.items.length);
+}
+
+function dlRow(d, now) {
+  const flexible = isFlexible(d, now);
+  // Work with no fixed deadline is really due when the semester ends.
+  const due = flexible ? (d.status === "submitted" ? null : semesterEnd()) : d.due ? new Date(d.due) : null;
+  const left = due ? due - now : 0;
+  const url = /^https?:\/\//.test(d.url || "") ? d.url : "#";
+
+  let whenText, tone = "";
+  if (d.status === "submitted") {
+    whenText = d.graded ? `Graded${d.grade ? " · " + d.grade : ""}`
+      : `Handed in${d.submittedAt ? " " + dayMonth(new Date(d.submittedAt)) : ""}`;
+    tone = "done";
+  } else if (!due) {
+    whenText = flexible ? "End of semester" : "No date";
+  } else {
+    whenText = countdown(left).replace(/^in /, "In ") + (flexible ? " (semester end)" : "");
+    tone = left < 0 ? "late" : left < DUE_SOON_DAYS * DAY ? "soon" : "";
+  }
+  if (d.status === "draft") whenText += " · draft saved";
+
+  const notes = [];
+  if (left < 0 && d.status !== "submitted" && d.cutoff && new Date(d.cutoff) > now) {
+    notes.push(`Late hand-ins accepted until ${fullDate(new Date(d.cutoff))}`);
+  }
+  const badge = due
+    ? `<b>${due.getDate()}</b><span>${esc(due.toLocaleDateString([], { month: "short" }))}${
+        due.getFullYear() !== now.getFullYear() ? ` ${String(due.getFullYear()).slice(2)}` : ""}</span>`
+    : `<md-icon>${d.status === "submitted" ? "task_alt" : flexible ? "event_upcoming" : "event_busy"}</md-icon>`;
+  const dueText = due ? ` · due ${fullDate(due)}` : "";
+
+  return `<md-list-item class="dl ${tone}" type="link" href="${esc(url)}" target="_blank" title="Open on Moodle">
+    <div slot="start" class="date-badge">${badge}</div>
+    <div slot="headline">${esc(d.name)}</div>
+    <div slot="supporting-text">${esc(d.course)}${d.code ? ` · ${esc(d.code)}` : ""}${d.kind === "quiz" ? " · quiz" : ""}${esc(tone === "done" ? "" : dueText)}${
+      notes.map(n => `<span class="note">${esc(n)}</span>`).join("")}</div>
+    <div slot="trailing-supporting-text" class="when">${esc(whenText)}</div>
+  </md-list-item>`;
+}
+
+// The banner at the very top: unfinished work that is overdue or due within a few days.
+function renderUrgent(items, now) {
+  const today = new Date(now); today.setHours(0, 0, 0, 0);
+  const urgent = items
+    .filter(d => d.status !== "submitted" && d.due && !isFlexible(d, now) && new Date(d.due) - now < DUE_SOON_DAYS * DAY)
+    .sort((a, b) => new Date(a.due) - new Date(b.due));
+  $("urgent").innerHTML = urgent.length ? `<div class="banner">
+    <md-icon>alarm</md-icon>
+    <div class="banner-body">${urgent.map(d => {
+      const due = new Date(d.due);
+      const days = Math.round((new Date(due).setHours(0, 0, 0, 0) - today) / DAY);
+      const label = due < now ? `Overdue, ${countdown(due - now)}`
+        : days === 0 ? `Due tonight at ${time(due)}`
+        : days === 1 ? `Due tomorrow at ${time(due)}`
+        : `Due ${fullDate(due)}`;
+      const url = /^https?:\/\//.test(d.url || "") ? d.url : "#";
+      return `<div class="line"><span class="title">${esc(label)}</span><br>
+        <a href="${esc(url)}" target="_blank" rel="noopener">${esc(d.name)}</a> · ${esc(d.course)}</div>`;
+    }).join("")}</div>
+  </div>` : "";
+}
+
+function renderDeadlines() {
+  if (!deadlines) return;
+  const now = new Date();
+  const items = deadlines.items || [];
+
+  $("dlMeta").textContent = deadlines.error
+    ? (items.length ? "Couldn't update, showing the last list" : "")
+    : deadlines.fetchedAt ? `Updated ${ago(deadlines.fetchedAt)}` : "";
+  renderUrgent(items, now);
+
+  if (!items.length) {
+    $("dlSummary").textContent = "";
+    $("dlList").innerHTML = deadlines.error
+      ? `<div class="empty">Couldn't reach Moodle: ${esc(deadlines.error)}</div>`
+      : deadlines.loading || !deadlines.fetchedAt
+        ? `<div class="empty">Loading deadlines from Moodle…</div>`
+        : `<div class="empty">Nothing due.</div>`;
+    return;
+  }
+
+  const groups = dlGroups(items, now);
+  const count = key => (groups.find(g => g.key === key) || { items: [] }).items.length;
+  const summary = [count("overdue") && `${count("overdue")} overdue`, count("week") && `${count("week")} due this week`].filter(Boolean);
+  $("dlSummary").textContent = summary.join(" · ") || "Nothing due this week";
+  $("dlSummary").classList.toggle("bad", !!summary.length);
+
+  const doneOpen = $("dlDone") ? $("dlDone").open : false;  // survive the once-a-minute redraw
+  $("dlList").innerHTML = groups.map(g => {
+    const list = `<md-list>${g.items.map(d => dlRow(d, now)).join("")}</md-list>`;
+    return g.key === "done"
+      ? `<details class="dl-group" id="dlDone" ${doneOpen ? "open" : ""}>
+          <summary><span class="group-title">${esc(g.title)} · ${g.items.length}</span><md-icon>expand_more</md-icon></summary>${list}</details>`
+      : `<div class="dl-group ${g.attention ? "attention" : ""}">
+          <div class="group-title">${esc(g.title)} · ${g.items.length}</div>
+          ${g.note ? `<div class="group-note">${esc(g.note)}</div>` : ""}${list}</div>`;
+  }).join("");
+}
+
+async function loadDeadlines(force) {
+  clearTimeout(deadlinesTimer);
+  try {
+    const { ok, data } = await api("/api/deadlines" + (force ? "?refresh=1" : ""));
+    deadlines = ok ? data : {
+      items: [],
+      error: "this dashboard server is older than the page. Close every dashboard tab, wait a minute, then open it again.",
+    };
+    renderDeadlines();
+    if (data.loading) deadlinesTimer = setTimeout(() => loadDeadlines(false), 1500);
+  } catch {
+    // the status card already reports a stopped server
+  }
+}
+
+/* ---------------- conflicts ---------------- */
+let conflicts = [];
+let openConflictPath = null;  // the pair shown in the dialog, so a slow compare can't land on another
+
+const folderOfPath = path => path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
+
+async function loadConflicts() {
+  try {
+    const { ok, data } = await api("/api/conflicts");
+    conflicts = ok ? data.items || [] : [];
+    renderConflicts(ok ? data.error : null);
+  } catch {
+    // the status card already reports a stopped server
+  }
+}
+
+function renderConflicts(error) {
+  $("conflicts").hidden = !conflicts.length && !error;
+  $("cfCount").textContent = error ? "Couldn't check" : plural(conflicts.length, "file");
+  $("cfList").innerHTML = error ? `<div class="empty">${esc(error)}</div>` : conflicts.map((c, i) => {
+    const name = c.original.split("/").pop();
+    const folder = folderOfPath(c.original);
+    const ext = name.includes(".") ? name.split(".").pop().toLowerCase() : "";
+    const kind = fileKind(ext);
+    const theirs = c.conflict ? `${c.place}'s edit from ${when(c.conflict.modified)}` : `${c.place}'s edit`;
+    const current = c.current ? `current from ${when(c.current.modified)}` : "current version is gone";
+    return `<md-list-item type="button" data-cf="${i}" title="${esc(c.path)}">
+      <md-icon slot="start" style="color:${kind.color}">${kind.icon}</md-icon>
+      <div slot="headline">${esc(name)}</div>
+      <div slot="supporting-text">${folder ? esc(folder) + " · " : ""}${esc(theirs)} · ${esc(current)}</div>
+      <md-icon slot="end">chevron_right</md-icon>
+    </md-list-item>`;
+  }).join("");
+}
+
+function cfSide(which, title, path, info, color, newer) {
+  const facts = info ? `Modified ${esc(fullDate(new Date(info.modified)))} · ${size(info.size)}`
+    : "Deleted or renamed since the conflict.";
+  const keep = info ? "Keep this one" : "Keep neither";
+  return `<div class="cf-side" style="--s:${color}">
+    <h4>${esc(title)}${newer ? "<small>Newer</small>" : ""}</h4>
+    <div class="facts">${facts}</div>
+    <div class="row">
+      ${info ? `<md-outlined-button data-openfile="${esc(path)}">Open</md-outlined-button>` : ""}
+      <md-filled-button data-keep="${which}">${keep}</md-filled-button>
+    </div>
+  </div>`;
+}
+
+function renderCompare(c, data) {
+  const box = $("cfCompare");
+  if (data.error) {
+    box.innerHTML = `<div class="notice bad">${esc(data.error)}</div>`;
+  } else if (data.same) {
+    box.innerHTML = `<div class="notice ok">Both versions are exactly the same, so it doesn't matter which one you keep.</div>`;
+  } else if (!c.current || !c.conflict) {
+    box.innerHTML = "";
+  } else if (!data.diff) {
+    box.innerHTML = `<div class="notice">The changes in this kind of file can't be shown here. Use Open on each version to compare them.</div>`;
+  } else if (!data.diff.length) {
+    box.innerHTML = `<div class="notice">The text is the same in both. The difference is in formatting, images or other content, so open each version to check.</div>`;
+  } else {
+    const unit = data.kind === "docx" ? "paragraphs" : "lines";
+    const rows = data.diff.map(line => {
+      const cls = line.startsWith("@@") ? "h" : line[0] === "-" ? "a" : line[0] === "+" ? "b" : "";
+      const text = cls === "h" ? "⋯" : line.slice(1);
+      return `<div class="${cls}">${esc(text) || " "}</div>`;
+    }).join("");
+    box.innerHTML = `<div class="diff-legend">
+        <span><i style="background:var(--md-sys-color-primary)"></i>${esc(unit)} only in the current version</span>
+        <span><i style="background:var(--md-sys-color-tertiary)"></i>${esc(unit)} only in ${esc(c.place)}'s version</span>
+      </div>
+      <div class="diff">${rows}</div>
+      ${data.truncated ? `<div class="muted" style="margin-top:4px;font-size:12px">Showing the first ${data.diff.length} lines of changes.</div>` : ""}`;
+  }
+}
+
+async function openConflict(c) {
+  const dlg = $("conflictDlg");
+  const name = c.original.split("/").pop();
+  const folder = folderOfPath(c.original);
+  const newer = c.current && c.conflict
+    ? (new Date(c.current.modified) >= new Date(c.conflict.modified) ? "current" : "conflict") : null;
+  openConflictPath = c.path;
+
+  $("cfTitle").textContent = name;
+  $("cfSub").textContent = `${folder ? folder + " · " : ""}Changed in two places before they were synced. Pick the version to keep.`;
+  $("cfSides").innerHTML =
+    cfSide("current", "Current version", c.original, c.current, "var(--md-sys-color-primary)", newer === "current") +
+    cfSide("conflict", `${c.place}'s version`, c.path, c.conflict, "var(--md-sys-color-tertiary)", newer === "conflict");
+  $("cfCompare").innerHTML = `<div class="notice">Comparing…</div>`;
+
+  $("cfSides").querySelectorAll("[data-openfile]").forEach(b => b.onclick = async () => {
+    const { data } = await api("/api/open-file", { path: b.dataset.openfile });
+    if (!data.ok) toast("Can't open", data.message || "");
+  });
+  $("cfSides").querySelectorAll("[data-keep]").forEach(b => b.onclick = () => resolveConflict(c, b.dataset.keep));
+  if (!dlg.open) dlg.show();
+
+  const { data } = await api("/api/conflict?path=" + encodeURIComponent(c.path)).catch(() => ({ data: { error: "The dashboard server stopped." } }));
+  if (dlg.open && openConflictPath === c.path) renderCompare(c, data);
+}
+
+async function resolveConflict(c, keep) {
+  const buttons = $("cfSides").querySelectorAll("[data-keep], [data-openfile]");
+  buttons.forEach(b => b.disabled = true);
+  const { ok, data } = await api("/api/resolve", { path: c.path, keep });
+  toast(ok ? "Conflict sorted" : "Couldn't sort it out", data.message || "");
+  if (ok) $("conflictDlg").close();
+  else buttons.forEach(b => b.disabled = false);
+  loadConflicts();
+  load(false);
+}
+
+function render() {
+  renderStatus();
+  renderProgress();
+  renderRun();
+  renderTabs();
+  renderFiles();
+  renderLog();
+}
+
+/* ---------------- data ---------------- */
+async function load(check) {
+  try {
+    const { data } = await api("/api/state" + (check ? "?check=1" : ""));
+    const job = data.job || {};
+    if (jobWasRunning && !job.running && job.summary) {
+      const title = job.kind === "download"
+        ? (job.failed ? "Moodle download hit a problem" : "Moodle download finished")
+        : job.kind === "webpull"
+        ? (job.failed ? "Printing slides hit a problem" : "Slides saved from the course website")
+        : job.dry_run ? "Preview only - nothing was sent"
+        : job.failed ? "Some files couldn't be sent" : "Files sent";
+      if (!chainRunning) toast(title, job.summary);  // "Get new files" shows one message at the end
+      if (job.kind === "download") loadDeadlines(true);  // new work may have appeared
+    }
+    if (jobWasRunning && !job.running) loadConflicts();  // a sync can make or clear conflicts
+    jobWasRunning = !!job.running;
+    state = data;
+    render();
+    if (job.running && !jobTimer) jobTimer = setInterval(() => load(false), 600);
+    if (!job.running && jobTimer) { clearInterval(jobTimer); jobTimer = null; }
+  } catch {
+    $("headline").textContent = "Dashboard stopped";
+    $("headlineSub").textContent = "The program behind this page isn't running. Open 4th Year Sync again from its shortcut, "
+      + "or run: python -m network_sync.ui";
+    $("pills").innerHTML = "";
+    $("syncBtn").disabled = $("previewBtn").disabled = $("downloadBtn").disabled = true;
+    $("webPullBtn").disabled = $("identicalBtn").disabled = $("updateBtn").disabled = true;
+  }
+}
+
+// md-dialog: show() opens it, and a "close" event fires however it is closed.
+function ask(dialog, okButton, cancelButton) {
+  return new Promise(resolve => {
+    let answer = false;
+    okButton.onclick = () => { answer = true; dialog.close(); };
+    cancelButton.onclick = () => dialog.close();
+    dialog.addEventListener("closed", () => resolve(answer), { once: true });
+    dialog.show();
+  });
+}
+
+function confirmSync(count) {
+  const ready = (state.destinations || []).filter(d => d.status && d.status.available);
+  $("confirmText").textContent = `Copy ${plural(count, "file")} from this laptop to ${names(ready)}? Files already there are skipped.`;
+  $("confirmPath").textContent = ready.map(d => d.path).join("\n");
+  return ask($("confirm"), $("confirmOk"), $("confirmCancel"));
+}
+
+async function sync(dryRun) {
+  const pending = state.files.filter(FILTERS[1].match).length;
+  const ready = (state.destinations || []).filter(d => d.status && d.status.available);
+  if (!ready.length) {
+    const first = (state.destinations || [])[0];
+    return toast("Nowhere to send to", (first && first.status && first.status.message) || "Not checked yet.");
+  }
+  if (!pending) return toast("Nothing to send", "Every copy already has every file.");
+  if (!dryRun && !(await confirmSync(pending))) return;
+  const { ok, data } = await api("/api/sync", { dryRun });
+  if (!ok) toast("Can't send", data.message || "Something went wrong.");
+  else { jobWasRunning = true; runPopClosed = dryRun; }  // a preview sends nothing, so no file list
+  load(false);
+}
+
+/* ---------------- events ---------------- */
+// Start one job and wait for it to finish; resolves with the finished job.
+async function runStep(path, body) {
+  const { ok, data } = await api(path, body);
+  if (!ok) return { failed: 1, summary: data.message || "Something went wrong." };
+  jobWasRunning = true;
+  runPopClosed = false;
+  for (;;) {
+    await load(false);
+    if (!(state.job || {}).running) return state.job || {};
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+}
+
+$("updateBtn").onclick = async () => {
+  chainRunning = true;
+  renderStatus();
+  const notes = [];
+  let problem = false;
+  try {
+    const moodle = await runStep("/api/download", {});
+    problem ||= !!moodle.failed;
+    notes.push(moodle.failed ? `Moodle: ${moodle.summary}` : `${plural(moodle.done || 0, "new file")} from Moodle.`);
+
+    if ((state.webpages || []).length) {
+      const web = await runStep("/api/web-pull", {});
+      problem ||= !!web.failed;
+      if (web.failed) notes.push(`Course website: ${web.summary}`);
+    }
+
+    await load(true);  // rescan, so the send sees what just arrived
+    const pending = state.files.filter(FILTERS[1].match).length;
+    if (!pending) {
+      notes.push("Nothing needed sending.");
+    } else {
+      const sent = await runStep("/api/sync", { dryRun: false });
+      problem ||= !!sent.failed;
+      notes.push(sent.failed ? `Sending: ${sent.summary}` : `${plural(pending, "file")} sent to your copies.`);
+    }
+  } finally {
+    chainRunning = false;
+    render();
+  }
+  toast(problem ? "Finished, with problems" : "All up to date", notes.join(" "));
+};
+
+$("moreBtn").onclick = () => {
+  const more = $("more");
+  more.hidden = !more.hidden;
+  $("moreLabel").textContent = more.hidden ? "More options" : "Fewer options";
+  $("moreIcon").textContent = more.hidden ? "expand_more" : "expand_less";
+  $("moreBtn").setAttribute("aria-expanded", String(!more.hidden));
+};
+$("downloadBtn").onclick = async () => {
+  const { ok, data } = await api("/api/download", {});
+  if (!ok) return toast("Can't download", data.message || "Something went wrong.");
+  jobWasRunning = true;
+  runPopClosed = false;
+  load(false);
+};
+$("webPullBtn").onclick = async () => {
+  const { ok, data } = await api("/api/web-pull", {});
+  if (!ok) return toast("Can't print the slides", data.message || "Something went wrong.");
+  jobWasRunning = true;
+  runPopClosed = false;
+  toast("Checking the course website", data.message);
+  load(false);
+};
+$("runClose").onclick = () => { runPopClosed = true; $("runPop").hidden = true; };
+$("snackClose").onclick = () => { $("snackbar").hidden = true; };
+
+function fileList(title, items, label) {
+  if (!items.length) return "";
+  const rows = items.slice(0, 60).map(i =>
+    `<div style="padding:2px 0;font-size:13px">${esc(i.path.split("/").pop())}<span class="muted"> · ${esc(label(i))}</span></div>`).join("");
+  const more = items.length > 60 ? `<div class="muted" style="font-size:12px">…and ${items.length - 60} more</div>` : "";
+  return `<div style="margin:12px 0 4px;font-weight:500">${esc(title)} · ${items.length}</div>${rows}${more}`;
+}
+
+$("identicalBtn").onclick = async () => {
+  const { data: plan } = await api("/api/identical-plan");
+  const year = { ready: [], offline: [], copies: [], conflicts: [], removals: [], total: 0, ...plan.year };
+  if (!plan.ready.length && year.ready.length < 2) return toast("Nothing reachable", "No copy can be reached right now.");
+  if (!plan.fetch.length && !plan.send.length && !year.total && !year.removals.length) return toast("Already matching", "This laptop and every copy hold the same files.");
+
+  const folderOf = path => path.includes("/") ? path.slice(0, path.lastIndexOf("/")) + " · " : "";
+  $("idSummary").textContent =
+    `Master folder: ${plural(plan.fetch.length, "file")} copied back to this laptop and ${plan.send.length} sent out. ` +
+    `Rest of 4th year: ${plural(year.copies.length, "file")} copied between ${year.ready.join(", ") || "nowhere"}` +
+    (year.conflicts.length ? `, and ${plural(year.conflicts.length, "edit")} made in two places kept as conflict copies.` : ".");
+  const yearOffline = year.offline.filter(o => !plan.offline.includes(o.name));
+  $("idWarn").hidden = !plan.bulkWarning && !plan.offline.length && !yearOffline.length;
+  $("idWarn").innerHTML = [
+    plan.bulkWarning ? `That's a lot of files to restore. Check a folder hasn't been renamed or a drive left disconnected first.` : "",
+    plan.offline.length ? `${esc(plan.offline.join(" and "))} is offline or paused, so it won't be touched.` : "",
+    ...yearOffline.map(o => `${esc(o.name)}'s 4th year folder is being left alone: ${esc(o.why)}`),
+  ].filter(Boolean).join("<br>");
+  $("idLists").innerHTML =
+    fileList("Master: copy back to this laptop", plan.fetch, i => `from ${i.from}`) +
+    fileList("Master: send out", plan.send, i => `to ${i.to.join(" and ")}`) +
+    fileList("Rest of 4th year: conflicts kept", year.conflicts, i => `${folderOf(i.path)}${i.place}'s edit saved as ${i.as.split("/").pop()}`) +
+    fileList("Rest of 4th year: remove discarded conflict copies", year.removals, i => `${folderOf(i.path)}from ${i.place}`) +
+    fileList("Rest of 4th year: copy", year.copies, i => `${folderOf(i.path)}from ${i.from} to ${i.to.join(" and ")}`);
+
+  if (!(await ask($("identicalDlg"), $("idOk"), $("idCancel")))) return;
+
+  const { ok, data } = await api("/api/identical", {});
+  if (!ok) return toast("Can't do that", data.message || "Something went wrong.");
+  jobWasRunning = true;
+  runPopClosed = false;
+  load(false);
+};
+$("syncBtn").onclick = () => sync(false);
+$("previewBtn").onclick = () => sync(true);
+$("checkBtn").onclick = async () => {
+  $("checkBtn").disabled = true;
+  await Promise.all([load(true), loadConflicts()]);
+  $("checkBtn").disabled = false;
+};
+$("cfList").onclick = e => {
+  const row = e.target.closest("[data-cf]");
+  if (row) openConflict(conflicts[+row.dataset.cf]);
+};
+$("cfClose").onclick = () => $("conflictDlg").close();
+$("conflictDlg").addEventListener("closed", () => { openConflictPath = null; });
+$("cfBin").onclick = async () => {
+  const { data } = await api("/api/open", { target: "bin" });
+  if (!data.ok) toast("Can't open", data.message || "");
+};
+$("search").addEventListener("input", renderFiles);
+$("tabs").addEventListener("click", e => {
+  const chip = e.target.closest("[data-filter]");
+  if (!chip) return;
+  filter = chip.dataset.filter;
+  renderTabs();
+  renderFiles();
+});
+$("courses").onclick = e => {
+  const row = e.target.closest("tr.course");
+  if (!row) return;
+  const slug = row.dataset.course;
+  openCourses.has(slug) ? openCourses.delete(slug) : openCourses.add(slug);
+  renderFiles();
+};
+function bindOpenButtons() {
+  document.querySelectorAll("[data-open]").forEach(b => b.onclick = async () => {
+    const { data } = await api("/api/open", { target: b.dataset.open });
+    if (!data.ok) toast("Can't open", data.message);
+  });
+}
+bindOpenButtons();
+
+$("dlRefresh").onclick = async () => {
+  $("dlRefresh").disabled = true;
+  $("dlMeta").textContent = "Asking Moodle…";
+  await loadDeadlines(true);
+  $("dlRefresh").disabled = false;
+};
+
+load(false).then(() => load(true));
+loadDeadlines(false);
+loadConflicts();
+setInterval(loadConflicts, 60000);                    // spot conflicts made by a sync run elsewhere
+setInterval(() => loadDeadlines(false), 5 * 60000);  // the server re-asks Moodle every 15 min
+setInterval(renderDeadlines, 60000);                  // keep countdowns current
+setInterval(() => { if (!jobTimer) load(true); }, 20000);   // re-test the server
+setInterval(() => { if (state) renderStatus(); }, 5000);     // keep "checked Xs ago" fresh
+</script>
+</body>
+</html>
