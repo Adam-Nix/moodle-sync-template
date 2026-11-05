@@ -36,7 +36,7 @@ Log = Callable[[str], None]
 # Called with (path relative to the 4th year folder, bytes) after each PDF is saved.
 OnFile = Callable[[str, int], None]
 
-SECTION_PREFIX = "Webpage"  # e.g. [Webpage snet08008]
+SECTION_PREFIX = "Webpage"  # e.g. [Webpage mycourse]
 DEFAULT_SUBFOLDER = "slides"
 DEFAULT_PRINT_QUERY = "print-pdf"  # reveal.js' printable view
 PAGE_TIMEOUT_MS = 60_000
