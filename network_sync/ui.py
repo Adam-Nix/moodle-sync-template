@@ -168,7 +168,7 @@ class Dashboard:
             for destination in self.destinations:
                 old = self.plans.get(destination.name, {})
                 status = (
-                    ns.check_remote(destination.path)
+                    ns.check_destination(destination)
                     if check_connection or not old.get("status")
                     else old["status"]
                 )
@@ -262,7 +262,7 @@ class Dashboard:
                     dry_run=dry_run,
                     on_progress=progress,
                     entries=entries,
-                    status=ns.check_remote(destination.path),
+                    status=ns.check_destination(destination),
                 )
                 parts.append(f"{destination.name}: {result.summary()}")
                 failed += len(result.failed)

@@ -75,6 +75,12 @@ def add(name: str, path: str, config_file: str = ns.CONFIG_FILE) -> ns.Destinati
         except OSError as error:
             raise LocationError(f"Can't use that folder: {error}") from error
 
+    destination = ns.Destination(name, path, kind="location")
+    if folder.is_dir():
+        try:  # you chose this folder, so it is fine to set it up (new locations start empty)
+            Path(destination.path).mkdir(exist_ok=True)
+        except OSError as error:
+            raise LocationError(f"Can't use that folder: {error}") from error
     status = ns.check_remote(path)
     if not status.available:
         raise LocationError(f"{status.message or 'That folder cannot be used right now.'} Nothing was saved.")
