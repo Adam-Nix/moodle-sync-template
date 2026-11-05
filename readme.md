@@ -16,5 +16,7 @@ Includes a small browser dashboard (`network_sync`) for syncing and resolving co
 `config.ini`, `secrets.ini`, `_data/` and downloaded course files are git-ignored - never commit them.
 
 ## Customising
-- The year/category it downloads is set in `moodle_downloader/naming.py`.
-- Folder names such as "4th year" come from `[Folders]` in `config.ini`.
+- The first run asks for your Moodle login, the folder to use and which Moodle category is
+  the current year; the answers are saved in `config.ini` (`[Folders]`, `[Courses]`).
+- OneDrive is detected from your environment and used automatically; set `onedrive =` blank to turn it off.
+- Playwright and Chromium are installed the first time web-page slide printing runs.
